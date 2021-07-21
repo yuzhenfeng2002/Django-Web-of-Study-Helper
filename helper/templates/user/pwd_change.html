@@ -1,0 +1,10 @@
+<p>{{ user.username }}    {{ user.email }}    {{ user.profile.name }}</p>
+
+<form method="post">
+    {% csrf_token %}
+    {{ form }}
+    <input type="submit" value="修改">
+    {% if message %}
+        <p>{{ message }}</p>
+    {% endif %}
+</form>

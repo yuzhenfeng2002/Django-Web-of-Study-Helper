@@ -1,0 +1,8 @@
+<form method="post">
+    {% csrf_token %}
+    {{ form }}
+    <input type="submit" value="登录">
+    {% if message %}
+        <p>{{ message }}</p>
+    {% endif %}
+</form>
