@@ -21,7 +21,6 @@ class Profile(models.Model):
 
 class Group(models.Model):
     users = models.ManyToManyField(User)
-    group_id = models.CharField(max_length=5, primary_key=True)
     group_name = models.CharField(max_length=20)
 
 
@@ -72,7 +71,6 @@ class SubAssignment(models.Model):
 
 
 class Blog(models.Model):
-    blog_id = models.AutoField(primary_key=True)
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     title = models.CharField(max_length=50)
     content = models.TextField()

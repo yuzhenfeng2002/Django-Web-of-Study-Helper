@@ -1,4 +1,4 @@
-from django.shortcuts import render, HttpResponse, get_object_or_404
+from django.shortcuts import render, get_object_or_404
 from django.http import HttpResponseRedirect
 from django.urls import reverse
 from django.contrib.auth.decorators import login_required
@@ -16,8 +16,8 @@ class RegistrationForm(forms.Form):
     user_id = forms.CharField(label='学/工号', max_length=7)
     email = forms.EmailField(label='邮箱')
     user_name = forms.CharField(label='昵称', max_length=10)
-    gender = forms.ChoiceField(widget=forms.RadioSelect, choices=GENDER_CHOICES)
-    user_type = forms.ChoiceField(widget=forms.RadioSelect, choices=TYPE_CHOICES)
+    gender = forms.ChoiceField(label='性别', widget=forms.RadioSelect, choices=GENDER_CHOICES)
+    user_type = forms.ChoiceField(label='用户类型', widget=forms.RadioSelect, choices=TYPE_CHOICES)
     class_name = forms.CharField(label='班级', max_length=20, required=False)
     password1 = forms.CharField(label='密码', widget=forms.PasswordInput)
     password2 = forms.CharField(label='再次输入密码', widget=forms.PasswordInput)
@@ -48,7 +48,7 @@ class RegistrationForm(forms.Form):
 
     def clean_password1(self):
         password1 = self.cleaned_data.get('password1')
-        if len(password1) < 3:
+        if len(password1) <= 6:
             raise forms.ValidationError("您的密码太短，请重新输入。")
         return password1
 
@@ -84,7 +84,7 @@ class PwdChangeForm(forms.Form):
 
     def clean_password1(self):
         password1 = self.cleaned_data.get('password1')
-        if len(password1) < 3:
+        if len(password1) <= 6:
             raise forms.ValidationError("您的密码太短，请重新输入。")
         return password1
 
@@ -95,40 +95,6 @@ class PwdChangeForm(forms.Form):
             raise forms.ValidationError('两次输入的密码不一致，请重新输入')
         return password2
 
-
-@login_required
-def homepage(request, pk):
-    user = get_object_or_404(User, pk=pk)
-    schedule = user.schedule_set.get()
-    return render(request, '../templates/user/homepage.html', {'user': user, 'schedule': schedule})
-
-
-'''
-@login_required
-def profile_update(request, pk):
-    user = get_object_or_404(User, pk=pk)
-    user_profile = get_object_or_404(Profile, user=user)
-
-    if request.method == 'POST':
-        form = ProfileForm(request.POST)
-
-        if form.is_valid():
-            user.first_name = form.cleaned_data['first_name']
-            user.last_name = form.cleaned_data['last_name']
-            user.save()
-
-            user_profile.org = form.cleaned_data['org']
-            user_profile.telephone = form.cleaned_data['telephone']
-            user_profile.save()
-
-            return HttpResponseRedirect(reverse('users:profile', args=[user.id]))
-    else:
-        default_data = {'first_name': user.first_name, 'last_name': user.last_name,
-                        'org': user_profile.org, 'telephone': user_profile.telephone, }
-        form = ProfileForm(default_data)
-
-    return render(request, 'users/profile_update.html', {'form': form, 'user': user})
-'''
 
 def register(request):
     if request.method == 'POST':
@@ -204,3 +170,10 @@ def pwd_change(request, pk):
         form = PwdChangeForm()
 
     return render(request, '../templates/user/pwd_change.html', {'form': form, 'user': user})
+
+
+@login_required
+def homepage(request, pk):
+    user = get_object_or_404(User, pk=pk)
+    schedule = user.schedule_set.get()
+    return render(request, '../templates/user/homepage.html', {'user': user, 'schedule': schedule})
