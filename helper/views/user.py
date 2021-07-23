@@ -1,12 +1,16 @@
-from django.shortcuts import render, get_object_or_404
-from django.http import HttpResponseRedirect
-from django.urls import reverse
-from django.contrib.auth.decorators import login_required
-from django.contrib.auth.models import User
-from ..models import Profile
 from django import forms
+from django.shortcuts import render, get_object_or_404
+from django.http import HttpResponseRedirect, HttpResponseForbidden
+from django.urls import reverse
+from django.utils import timezone
+from django.contrib.auth.decorators import login_required
 from django.contrib import auth
+from django.db.models import Q
+from ..models import *
+from .settings import *
 import re
+import datetime
+import copy
 
 
 class RegistrationForm(forms.Form):
@@ -140,6 +144,13 @@ def login(request):
 
 
 @login_required
+def index(request):
+    user = request.user
+    if user.is_authenticated:
+        return HttpResponseRedirect(reverse('helper:homepage', args=(user.id,)))
+
+
+@login_required
 def logout(request):
     auth.logout(request)
     return HttpResponseRedirect(reverse("helper:login"))
@@ -148,6 +159,8 @@ def logout(request):
 @login_required
 def pwd_change(request, pk):
     user = get_object_or_404(User, pk=pk)
+    if user.id != request.user.id:
+        return HttpResponseForbidden()
 
     if request.method == "POST":
         form = PwdChangeForm(request.POST)
@@ -175,5 +188,62 @@ def pwd_change(request, pk):
 @login_required
 def homepage(request, pk):
     user = get_object_or_404(User, pk=pk)
-    schedule = user.schedule_set.get()
-    return render(request, '../templates/user/homepage.html', {'user': user, 'schedule': schedule})
+    if user.id != request.user.id:
+        return HttpResponseForbidden()
+
+    schedule_not_repeated = user.schedule_set.filter(
+        start_time__range=(timezone.now(),
+                           timezone.now() +
+                           datetime.timedelta(days=HOMEPAGE_SCHEDULE_DAY)),
+        is_repeated__exact=False)
+    schedule_daily = user.schedule_set.filter(is_repeated__exact=True, repeat_cycle__exact='D')
+    schedule_weekly = user.schedule_set.filter(is_repeated__exact=True, repeat_cycle__exact='W')
+    schedule_monthly = user.schedule_set.filter(is_repeated__exact=True, repeat_cycle__exact='M')
+
+    def update_time(s):
+        interval = time.date() - s.start_time.date()
+        s.start_time += datetime.timedelta(days=interval.days)
+        s.end_time += datetime.timedelta(days=interval.days)
+
+    schedules = list(schedule_not_repeated)
+    for i in range(HOMEPAGE_SCHEDULE_DAY):
+        time = timezone.now() + datetime.timedelta(days=i)
+        for j in range(len(schedule_daily)):
+            s = copy.copy(schedule_daily[j])
+            update_time(s)
+            schedules.append(s)
+        for j in range(len(schedule_weekly)):
+            s = copy.copy(schedule_weekly[j])
+            if s.start_time.weekday() == time.weekday():
+                update_time(s)
+                schedules.append(s)
+        for j in range(len(schedule_monthly)):
+            s = copy.copy(schedule_monthly[j])
+            if s.start_time.day == time.day:
+                update_time(s)
+                schedules.append(s)
+    schedules.sort(key=lambda sc: sc.start_time)
+
+    group_sub_assignments = user.subassignment_set. \
+        filter(deadline__range=(timezone.now(),
+                                timezone.now() +
+                                datetime.timedelta(days=HOMEPAGE_SCHEDULE_DAY))).order_by('deadline')
+
+    friends = Friend.objects.filter(user_id__exact=user.id)
+
+    blogs = Blog.objects.filter(Q(user__blog__pageview__gte=HOT_BLOG_PAGEVIEW,
+                                  user__blog__created_time__gte
+                                  =timezone.now() - datetime.timedelta(days=HOMEPAGE_HOT_BLOG_DAY)) |
+                                Q(user__blog__created_time__gte
+                                  =timezone.now() - datetime.timedelta(days=HOMEPAGE_COMMON_BLOG_DAY))).distinct()
+    if len(blogs) > HOMEPAGE_BLOG_NUMBER:
+        blogs = blogs[:HOMEPAGE_BLOG_NUMBER]
+
+    return render(request, '../templates/user/homepage.html',
+                  {
+                      'user': user,
+                      'schedules': schedules,
+                      'group_sub_assignments': group_sub_assignments,
+                      'friends': friends,
+                      'blogs': blogs
+                  })

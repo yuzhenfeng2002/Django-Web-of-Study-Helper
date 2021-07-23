@@ -18,10 +18,16 @@ class Profile(models.Model):
     type = models.CharField(max_length=1, choices=TYPE_CHOICES)
     class_name = models.CharField(max_length=20, blank=True, null=True)
 
+    def __str__(self):
+        return self.user.username
+
 
 class Group(models.Model):
     users = models.ManyToManyField(User)
     group_name = models.CharField(max_length=20)
+
+    def __str__(self):
+        return self.group_name
 
 
 class Schedule(models.Model):
@@ -31,7 +37,6 @@ class Schedule(models.Model):
         ('M', 'Monthly')
     )
     user = models.ForeignKey(User, on_delete=models.CASCADE)
-    schedule_id = models.CharField(max_length=5)
     description = models.CharField(max_length=50)
     type = models.CharField(max_length=10)
     is_repeated = models.BooleanField()
@@ -42,23 +47,21 @@ class Schedule(models.Model):
     deadline = models.DateTimeField()
     expected_minutes_consumed = models.IntegerField(blank=True, null=True)
 
-    class Meta:
-        unique_together = ("user", "schedule_id")
+    def __str__(self):
+        return self.description
 
 
 class GroupAssignment(models.Model):
     group = models.ForeignKey(Group, on_delete=models.CASCADE)
-    assignment_id = models.CharField(max_length=5)
     description = models.TextField()
     deadline = models.DateTimeField()
 
-    class Meta:
-        unique_together = ("group", "assignment_id")
+    def __str__(self):
+        return self.description
 
 
 class SubAssignment(models.Model):
     assignment = models.ForeignKey(GroupAssignment, on_delete=models.CASCADE)
-    sub_assignment_id = models.CharField(max_length=5)
     pre_sub_assignment = models.CharField(max_length=600, blank=True, null=True)
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     description = models.TextField()
@@ -66,26 +69,29 @@ class SubAssignment(models.Model):
     deadline = models.DateTimeField()
     expected_minutes_consumed = models.IntegerField(blank=True, null=True)
 
-    class Meta:
-        unique_together = ("assignment", "sub_assignment_id")
+    def __str__(self):
+        return self.description
 
 
 class Blog(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     title = models.CharField(max_length=50)
     content = models.TextField()
+    created_time = models.DateTimeField(auto_now_add=True, auto_now=False)
     pageview = models.IntegerField(default=0)
     collect_amount = models.IntegerField(default=0)
+
+    def __str__(self):
+        return self.title
 
 
 class Comment(models.Model):
     blog = models.ForeignKey(Blog, on_delete=models.CASCADE)
-    comment_id = models.CharField(max_length=5)
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     content = models.TextField()
 
-    class Meta:
-        unique_together = ("blog", "comment_id")
+    def __str__(self):
+        return self.content
 
 
 class Friend(models.Model):
