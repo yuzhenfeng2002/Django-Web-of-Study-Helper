@@ -134,7 +134,7 @@ def login(request):
             user = auth.authenticate(username=user_id, password=password)
             if user is not None and user.is_active:
                 auth.login(request, user)
-                return HttpResponseRedirect(reverse('helper:homepage', args=(user.id,)))
+                return HttpResponseRedirect(reverse('helper:home'))
             else:
                 return render(request, '../templates/user/login.html',
                               {'form': form, 'message': '密码错误，请重新输入！'})
@@ -147,7 +147,7 @@ def login(request):
 def index(request):
     user = request.user
     if user.is_authenticated:
-        return HttpResponseRedirect(reverse('helper:homepage', args=(user.id,)))
+        return HttpResponseRedirect(reverse('helper:home'))
 
 
 @login_required
@@ -157,10 +157,8 @@ def logout(request):
 
 
 @login_required
-def pwd_change(request, pk):
-    user = get_object_or_404(User, pk=pk)
-    if user.id != request.user.id:
-        return HttpResponseForbidden()
+def pwd_change(request):
+    user = request.user
 
     if request.method == "POST":
         form = PwdChangeForm(request.POST)
@@ -185,12 +183,7 @@ def pwd_change(request, pk):
     return render(request, '../templates/user/pwd_change.html', {'form': form, 'user': user})
 
 
-@login_required
-def homepage(request, pk):
-    user = get_object_or_404(User, pk=pk)
-    if user.id != request.user.id:
-        return HttpResponseForbidden()
-
+def get_aside(user):
     schedule_not_repeated = user.schedule_set.filter(
         start_time__range=(timezone.now(),
                            timezone.now() +
@@ -229,21 +222,71 @@ def homepage(request, pk):
                                 timezone.now() +
                                 datetime.timedelta(days=HOMEPAGE_SCHEDULE_DAY))).order_by('deadline')
 
-    friends = Friend.objects.filter(user_id__exact=user.id)
+    friends = Friend.objects.filter(user_id__exact=user.id, authority__gte=1)
+    return schedules, group_sub_assignments, friends
+
+
+@login_required
+def home(request):
+    user = request.user
+
+    schedules, group_sub_assignments, friends = get_aside(user)
 
     blogs = Blog.objects.filter(Q(user__blog__pageview__gte=HOT_BLOG_PAGEVIEW,
-                                  user__blog__created_time__gte
+                                  modified_time__gte
                                   =timezone.now() - datetime.timedelta(days=HOMEPAGE_HOT_BLOG_DAY)) |
-                                Q(user__blog__created_time__gte
-                                  =timezone.now() - datetime.timedelta(days=HOMEPAGE_COMMON_BLOG_DAY))).distinct()
+                                Q(modified_time__gte
+                                  =timezone.now() - datetime.timedelta(days=HOMEPAGE_COMMON_BLOG_DAY))).distinct().order_by('-modified_time')
     if len(blogs) > HOMEPAGE_BLOG_NUMBER:
         blogs = blogs[:HOMEPAGE_BLOG_NUMBER]
 
-    return render(request, '../templates/user/homepage.html',
+    return render(request, '../templates/user/home.html',
                   {
                       'user': user,
                       'schedules': schedules,
                       'group_sub_assignments': group_sub_assignments,
                       'friends': friends,
                       'blogs': blogs
+                  })
+
+
+@login_required
+def friends_admin(request):
+    user = request.user
+
+    if request.method == 'POST':
+        delete_id = request.POST.get('delete_id')
+        agree_id = request.POST.get('agree_id')
+        apply_id = request.POST.get('apply_id')
+        if not(delete_id is None):
+            try:
+                Friend.objects.filter(user_id__exact=delete_id, friend_id__exact=user.id)[0].delete()
+            except IndexError:
+                pass
+            try:
+                Friend.objects.filter(user_id__exact=user.id, friend_id__exact=delete_id)[0].delete()
+            except IndexError:
+                pass
+
+        if not(agree_id is None):
+            friend = Friend.objects.filter(user_id__exact=agree_id, friend_id__exact=user.id)[0]
+            friend.authority = 1
+            friend.save()
+            if len(Friend.objects.filter(user_id__exact=user.id, friend_id__exact=agree_id)) == 0:
+                new_friend = Friend(user=user, friend=friend.user, authority=0)
+                new_friend.save()
+
+        if not(apply_id is None):
+            friend = Friend.objects.filter(user_id__exact=user.id, friend__username__exact=apply_id)
+            if len(friend) == 0:
+                new_friend = Friend(user=user, friend=User.objects.filter(username__exact=apply_id)[0], authority=0)
+                new_friend.save()
+
+    friends = Friend.objects.filter(user_id__exact=user.id, authority__gte=1)
+    friends_not_authorised = Friend.objects.filter(friend_id__exact=user.id, authority__exact=0)
+
+    return render(request, '../templates/user/friends_admin.html',
+                  {
+                      'friends': friends,
+                      'friends_not_authorised': friends_not_authorised
                   })

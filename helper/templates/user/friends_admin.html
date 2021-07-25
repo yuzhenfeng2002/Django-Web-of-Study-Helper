@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="zh">
+  <head>
+    <meta charset="utf-8">
+    <title>好友管理</title>
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'style.css' %}">
+  </head>
+
+  <body>
+    <header>
+      <h1>我的学习助手</h1>
+      <ul>
+        <li>{{ user.username }}</li>
+        <li>{{ user.email }}</li>
+        <li>{{ user.profile.name }}</li>
+      </ul>
+      <p><a href="{% url 'helper:pwd_change' %}">修改密码</a> <a href="{% url 'helper:logout' %}">退出登录</a></p>
+
+      <nav>
+        <ul>
+          <li><a href="{% url 'helper:home' %}">我的主页</a></li>
+          <li><a href="{% url 'helper:blog_homepage' %}">我的博客</a></li>
+          <li><a href="{% url 'helper:hot' 1 %}">热门博客</a></li>
+          <li><a href="{% url 'helper:friends_admin' %}">我的好友</a></li>
+          <li><a href="{% url 'helper:home' %}">我的日程</a></li>
+          <li><a href="{% url 'helper:home' %}">小组任务</a></li>
+        </ul>
+      </nav>
+    </header>
+
+    <main>
+      <article>
+        <h2>我的好友</h2>
+        <ul>
+            {% if friends %}
+                {% for f in friends %}
+                <li><a href="{% url 'helper:public' f.friend.id %}">
+                    {{ f.friend.username }}    {{ f.friend.profile.name }}
+                </a></li>
+                <form method="post">
+                    {% csrf_token %}
+                    <input type="hidden" name="delete_id" value="{{ f.friend.id }}">
+                    <button name="delete">删除好友</button>
+                </form>
+                {% endfor %}
+            {% endif %}
+        </ul>
+
+        <h2>好友申请</h2>
+            {% if friends_not_authorised %}
+                {% for f in friends_not_authorised %}
+                <p>{{ f.user.username }} {{ f.user.profile.name }}</p>
+                <form method="post">
+                    {% csrf_token %}
+                    <input type="hidden" name="agree_id" value="{{ f.user.id }}">
+                    <button name="agree">通过申请</button>
+                </form>
+                {% endfor %}
+            {% endif %}
+        
+        <h2>添加好友</h2>
+        <form method="post">
+            {% csrf_token %}
+            <label>
+                <input type="text" name="apply_id">
+            </label>
+            <button name="apply">发起申请</button>
+        </form>
+      </article>
+
+      <aside>
+        <h2>好友列表</h2>
+        {% if friends %}
+          <ul>
+            {% for f in friends %}
+              <li><a href="{% url 'helper:public' f.friend.id %}">
+                {{ f.friend.username }} {{ f.friend.profile.name }}
+              </a></li>
+            {% endfor %}
+          </ul>
+        {% endif %}
+      </aside>
+
+    </main>
+
+    <footer>
+      <p>本站点遵守 MIT 协议。原始版本由 Yuzhen FENG 于 2021 年编写。</p>
+    </footer>
+
+</body>
+</html>

@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="zh">
+  <head>
+    <meta charset="utf-8">
+    <title>个人主页</title>
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'style.css' %}">
+  </head>
+
+  <body>
+    <header>
+      <h1>我的学习助手</h1>
+      <ul>
+        <li>{{ user.username }}</li>
+        <li>{{ user.email }}</li>
+        <li>{{ user.profile.name }}</li>
+      </ul>
+      <p><a href="{% url 'helper:pwd_change' %}">修改密码</a> <a href="{% url 'helper:logout' %}">退出登录</a></p>
+
+      <nav>
+        <ul>
+          <li><a href="{% url 'helper:home' %}">我的主页</a></li>
+          <li><a href="{% url 'helper:blog_homepage' %}">我的博客</a></li>
+          <li><a href="{% url 'helper:hot' 1 %}">热门博客</a></li>
+          <li><a href="{% url 'helper:friends_admin' %}">我的好友</a></li>
+          <li><a href="{% url 'helper:home' %}">我的日程</a></li>
+          <li><a href="{% url 'helper:home' %}">小组任务</a></li>
+        </ul>
+      </nav>
+    </header>
+
+    <main>
+      <article>
+        <h2>{{ blog.title }}</h2>
+        <p>
+            {{ blog.created_time.date }} {{ blog.pageview }}
+            {% if user.id == blog.user.id %}
+            <a href="{% url 'helper:blog_modify' blog.id %}">修改博客</a>
+            <a href="{% url 'helper:blog_delete' blog.id %}">删除博客</a>
+            {% endif %}
+        </p>
+        <p>{{ blog.content|linebreaksbr }}</p>
+
+        <form method="post">
+            {% csrf_token %}
+            <input type="hidden" name="collect_blog">
+            <button name="collect">收藏博客</button>
+        </form>
+        
+        <form method="post">
+            {% csrf_token %}
+            <input type="text" name="create_comment">
+            <button name="create">发表评论</button>
+        </form>
+        
+        {% if comments %}
+            {% for c in comments %}
+            <p>{{ c.content|linebreaksbr }}</p>
+            {% if c.user.id == user.id %}
+                <form method="post">
+                    {% csrf_token %}
+                    <input type="hidden" name="delete_comment" value="{{ c.content }}">
+                    <button name="delete">删除评论</button>
+                </form>
+            {% endif %}
+            {% endfor %}
+        {% endif %}
+      </article>
+
+      <aside>
+        <h2>评论列表</h2>
+        {% if comments %}
+            {% for c in comments %}
+            <p>{{ c.content|truncatewords:10 }}</p>
+            {% endfor %}
+        {% endif %}
+      </aside>
+
+    </main>
+
+    <footer>
+      <p>本站点遵守 MIT 协议。原始版本由 Yuzhen FENG 于 2021 年编写。</p>
+    </footer>
+
+</body>
+</html>

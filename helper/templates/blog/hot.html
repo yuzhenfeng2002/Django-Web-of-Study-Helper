@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="zh">
+  <head>
+    <meta charset="utf-8">
+    <title>个人主页</title>
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'style.css' %}">
+  </head>
+
+  <body>
+    <header>
+      <h1>我的学习助手</h1>
+      <ul>
+        <li>{{ user.username }}</li>
+        <li>{{ user.email }}</li>
+        <li>{{ user.profile.name }}</li>
+      </ul>
+      <p><a href="{% url 'helper:pwd_change' %}">修改密码</a> <a href="{% url 'helper:logout' %}">退出登录</a></p>
+
+      <nav>
+        <ul>
+          <li><a href="{% url 'helper:home' %}">我的主页</a></li>
+          <li><a href="{% url 'helper:blog_homepage' %}">我的博客</a></li>
+          <li><a href="{% url 'helper:hot' 1 %}">热门博客</a></li>
+          <li><a href="{% url 'helper:friends_admin' %}">我的好友</a></li>
+          <li><a href="{% url 'helper:home' %}">我的日程</a></li>
+          <li><a href="{% url 'helper:home' %}">小组任务</a></li>
+        </ul>
+      </nav>
+    </header>
+
+    <main>
+      <article>
+        <h2>热门博客</h2>
+        {% if blogs %}
+          {% for b in blogs %}
+            <h3><a href="{% url 'helper:blog_page' b.id %}">{{ b.title }}</a></h3>
+            <p>{{ b.created_time }} {{ b.pageview }}</p>
+            <p>{{ b.content|truncatewords:50 }}</p>
+          {% endfor %}
+        {% endif %}
+      </article>
+
+      <aside>
+          <h2>博客列表</h2>
+          {% if blogs %}
+          {% for b in blogs %}
+            <p><a href="{% url 'helper:blog_page' b.id %}">{{ b.title }}</a></p>
+          {% endfor %}
+        {% endif %}
+      </aside>
+
+    </main>
+
+    <footer>
+        <a href="{% url 'helper:hot' current_page|add:'-1' %}">上一页</a>
+        <a href="{% url 'helper:hot' current_page|add:'1' %}">下一页</a>
+        <p>第{{ current_page }}页，共{{ page_num }}页</p>
+        <p>本站点遵守 MIT 协议。原始版本由 Yuzhen FENG 于 2021 年编写。</p>
+    </footer>
+
+</body>
+</html>

@@ -78,6 +78,7 @@ class Blog(models.Model):
     title = models.CharField(max_length=50)
     content = models.TextField()
     created_time = models.DateTimeField(auto_now_add=True, auto_now=False)
+    modified_time = models.DateTimeField(auto_now_add=False, auto_now=True)
     pageview = models.IntegerField(default=0)
     collect_amount = models.IntegerField(default=0)
 
@@ -89,6 +90,7 @@ class Comment(models.Model):
     blog = models.ForeignKey(Blog, on_delete=models.CASCADE)
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     content = models.TextField()
+    created_time = models.DateTimeField(auto_now_add=True, auto_now=False)
 
     def __str__(self):
         return self.content
