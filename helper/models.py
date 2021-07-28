@@ -23,11 +23,19 @@ class Profile(models.Model):
 
 
 class Group(models.Model):
-    users = models.ManyToManyField(User)
+    id = models.AutoField(primary_key=True)
     group_name = models.CharField(max_length=20)
+    type = models.CharField(max_length=20, default="学习")
+    leader = models.ForeignKey(User, on_delete=models.CASCADE)
 
     def __str__(self):
         return self.group_name
+
+
+class UserGroup(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    group = models.ForeignKey(Group, on_delete=models.CASCADE)
+    is_leader = models.BooleanField()
 
 
 class Schedule(models.Model):
@@ -36,16 +44,48 @@ class Schedule(models.Model):
         ('W', 'Weekly'),
         ('M', 'Monthly')
     )
+    id = models.AutoField(primary_key=True)
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     description = models.CharField(max_length=50)
     type = models.CharField(max_length=10)
     is_repeated = models.BooleanField()
+    is_done = models.BooleanField(default=0)
     repeat_cycle = models.CharField(max_length=1, choices=CYCLE_CHOICES, blank=True, null=True)
     start_time = models.DateTimeField()
-    end_time = models.DateTimeField()
     weight = models.IntegerField(default=1)
     deadline = models.DateTimeField()
     expected_minutes_consumed = models.IntegerField(blank=True, null=True)
+    process = models.DecimalField(max_digits=3, decimal_places=2 , default= 0.00)
+
+    def __str__(self):
+        return self.description
+
+
+class Finished_Schedule(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    schedule =  models.ForeignKey("Schedule",on_delete=models.CASCADE)
+    description = models.CharField(max_length=50)
+    type = models.CharField(max_length=10)
+    is_repeated = models.BooleanField()
+    start_time = models.DateTimeField()
+    end_time = models.DateTimeField()
+    weight = models.IntegerField(default=1)
+
+    def __str__(self):
+        return self.description
+
+
+class Today_Schedule(models.Model):
+    schedule =  models.ForeignKey("Schedule",on_delete=models.CASCADE)
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    description = models.CharField(max_length=50)
+    type = models.CharField(max_length=10)
+    is_repeated = models.BooleanField()
+    start_time = models.DateTimeField()
+    end_time = models.DateTimeField()
+    spend_time = models.IntegerField()
+    weight = models.IntegerField(default=1)
+    process = models.DecimalField(  max_digits = 3,decimal_places = 2)
 
     def __str__(self):
         return self.description

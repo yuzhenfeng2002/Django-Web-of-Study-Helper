@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="zh">
+  <head>
+    <meta charset="utf-8">
+    <title>小组管理</title>
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'style.css' %}">
+  </head>
+
+  <body>
+    <header>
+      <h1>我的学习助手</h1>
+      <ul>
+        <li>{{ user.username }}</li>
+        <li>{{ user.email }}</li>
+        <li>{{ user.profile.name }}</li>
+      </ul>
+      <p><a href="{% url 'helper:pwd_change' %}">修改密码</a> <a href="{% url 'helper:logout' %}">退出登录</a></p>
+
+      <nav>
+        <ul>
+          <li><a href="{% url 'helper:home' %}">我的主页</a></li>
+          <li><a href="{% url 'helper:blog_homepage' %}">我的博客</a></li>
+          <li><a href="{% url 'helper:hot' 1 %}">热门博客</a></li>
+          <li><a href="{% url 'helper:friends_admin' %}">我的好友</a></li>
+          <li><a href="{% url 'helper:home' %}">我的日程</a></li>
+          <li><a href="{% url 'helper:home' %}">小组任务</a></li>
+        </ul>
+      </nav>
+    </header>
+
+    <main>
+      <article>
+        <h2>{{ group.group_name }}</h2><p>组长：{{ group.leader.username }}</p>
+        <h3>小组任务</h3>
+        {% if request.user.id == group.leader.id %}
+            <p><a href="{% url 'helper:assign_add' group.id %}">新建任务</a></p>
+        {% endif %}
+        <ul>
+            {% if assignments %}
+                {% for a in assignments %}
+                <li>{{ a.description }} {{ a.deadline }}</li>
+                {% endfor %}
+            {% endif %}
+        </ul>
+
+        <h3>小组子任务</h3>
+        {% if request.user.id == group.leader.id %}
+            <p><a href="{% url 'helper:sub_assign_add' group.id %}">新建子任务</a></p>
+        {% endif %}
+        <ul>
+            {% if sub_assignments %}
+                {% for a in sub_assignments %}
+                <li>{{ a.description }} {{ a.deadline }} {{ a.user.username }}</li>
+                {% endfor %}
+            {% endif %}
+        </ul>
+      </article>
+
+      <aside>
+        <h2>成员列表</h2>
+        {% if partcipants %}
+          <ul>
+            {% for p in partcipants %}
+              <li><a href="{% url 'helper:public' p.user.id %}">
+                {{ p.user.username }} {{ p.user.profile.name }}
+              </a></li>
+            {% endfor %}
+          </ul>
+        {% endif %}
+      </aside>
+
+    </main>
+
+    <footer>
+      <p>本站点遵守 MIT 协议。原始版本由 Yuzhen FENG 于 2021 年编写。</p>
+    </footer>
+
+</body>
+</html>

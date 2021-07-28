@@ -4,13 +4,10 @@ from django.http import HttpResponseRedirect, HttpResponseForbidden, HttpRespons
 from django.urls import reverse
 from django.utils import timezone
 from django.contrib.auth.decorators import login_required
-from django.contrib import auth
 from django.db.models import Q
 from ..models import *
 from .settings import *
-import re
 import datetime
-import copy
 import math
 
 

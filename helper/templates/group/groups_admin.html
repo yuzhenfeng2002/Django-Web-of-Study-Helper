@@ -2,7 +2,7 @@
 <html lang="zh">
   <head>
     <meta charset="utf-8">
-    <title>好友管理</title>
+    <title>小组管理</title>
     {% load static %}
     <link rel="stylesheet" href="{% static 'style.css' %}">
   </head>
@@ -31,51 +31,53 @@
 
     <main>
       <article>
-        <h2>我的好友</h2>
+        <h2>我的小组</h2>
         <ul>
-            {% if friends %}
-                {% for f in friends %}
-                <li><a href="{% url 'helper:public' f.friend.id %}">
-                    {{ f.friend.username }}    {{ f.friend.profile.name }}
+            {% if groups %}
+                {% for g in groups %}
+                <li><a href="{% url 'helper:group_home' g.id %}">
+                    {{ g.group_name }}
                 </a></li>
-                <form method="post">
-                    {% csrf_token %}
-                    <input type="hidden" name="delete_id" value="{{ f.friend.id }}">
-                    <button name="delete">删除好友</button>
-                </form>
                 {% endfor %}
             {% endif %}
         </ul>
-
-        <h2>好友申请</h2>
-            {% if friends_not_authorised %}
-                {% for f in friends_not_authorised %}
-                <p>{{ f.user.username }} {{ f.user.profile.name }}</p>
-                <form method="post">
-                    {% csrf_token %}
-                    <input type="hidden" name="agree_id" value="{{ f.user.id }}">
-                    <button name="agree">通过申请</button>
-                </form>
-                {% endfor %}
-            {% endif %}
-        
-        <h2>添加好友</h2>
+        <h2>添加小组</h2>
+        <form method="post">
+            {% csrf_token %}
+            {{ add_form }}
+            <input name="add" type="submit" value="提交">
+        </form>
+        <h2>搜索小组</h2>
+        <p>组长学号：</p>
         <form method="post">
             {% csrf_token %}
             <label>
-                <input type="text" name="apply_id">
+                <input type="text" name="leader_id">
             </label>
-            <button name="apply">发起申请</button>
+            <button name="search_for_leader">发起查询</button>
+        </form>
+        {% if leader_groups %}
+            {% for g in leader_groups %}
+                <p>{{ g.id }} {{ g.group_name }}</p>
+            {% endfor %}
+        {% endif %}
+        <p>小组序号：</p>
+        <form method="post">
+            {% csrf_token %}
+            <label>
+                <input type="text" name="group_id">
+            </label>
+            <button name="search_for_group">添加小组</button>
         </form>
       </article>
 
       <aside>
-        <h2>好友列表</h2>
-        {% if friends %}
+        <h2>小组列表</h2>
+        {% if groups %}
           <ul>
-            {% for f in friends %}
-              <li><a href="{% url 'helper:public' f.friend.id %}">
-                {{ f.friend.username }} {{ f.friend.profile.name }}
+            {% for g in groups %}
+              <li><a href="{% url 'helper:group_home' g.id %}">
+                  {{ g.group_name }}
               </a></li>
             {% endfor %}
           </ul>

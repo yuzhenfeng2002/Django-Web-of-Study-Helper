@@ -1,5 +1,5 @@
 from django.urls import path
-from .views import user, blog
+from .views import user, blog, group
 
 
 app_name = 'helper'
@@ -18,4 +18,8 @@ urlpatterns = [
     path('blog/<int:pk>/', blog.blog, name='blog_page'),
     path('blog/friend/<int:friend_id>/', blog.public, name='public'),
     path('logout/', user.logout, name='logout'),
+    path('group/', group.group_admin, name='group_admin'),
+    path('group/<int:pk>/', group.home, name='group_home'),
+    path('group/<int:pk>/add_assign/', group.add_assign, name='assign_add'),
+    path('group/<int:pk>/add_sub_assign/', group.add_sub_assign, name='sub_assign_add'),
 ]
