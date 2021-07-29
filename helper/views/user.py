@@ -185,18 +185,25 @@ def pwd_change(request):
 
 def get_aside(user):
     schedule_not_repeated = user.schedule_set.filter(
-        start_time__range=(timezone.now(),
-                           timezone.now() +
-                           datetime.timedelta(days=HOMEPAGE_SCHEDULE_DAY)),
+        deadline__range=(timezone.now(), timezone.now() + datetime.timedelta(days=HOMEPAGE_SCHEDULE_DAY)),
         is_repeated__exact=False)
-    schedule_daily = user.schedule_set.filter(is_repeated__exact=True, repeat_cycle__exact='D')
-    schedule_weekly = user.schedule_set.filter(is_repeated__exact=True, repeat_cycle__exact='W')
-    schedule_monthly = user.schedule_set.filter(is_repeated__exact=True, repeat_cycle__exact='M')
+    schedule_daily = user.schedule_set.filter(is_repeated__exact=True, repeat_cycle__exact='D',
+                                              deadline__gte=timezone.now(), start_time__lte=timezone.now())
+    schedule_weekly = user.schedule_set.filter(is_repeated__exact=True, repeat_cycle__exact='W',
+                                               deadline__range=(
+                                                   timezone.now(),
+                                                   timezone.now() + datetime.timedelta(days=HOMEPAGE_SCHEDULE_DAY)))
+    schedule_monthly = user.schedule_set.filter(is_repeated__exact=True, repeat_cycle__exact='M',
+                                                deadline__range=
+                                                (timezone.now(),
+                                                 timezone.now() + datetime.timedelta(days=HOMEPAGE_SCHEDULE_DAY)))
+
+    print(len(schedule_not_repeated), len(schedule_daily), len(schedule_weekly), len(schedule_monthly))
 
     def update_time(s):
         interval = time.date() - s.start_time.date()
         s.start_time += datetime.timedelta(days=interval.days)
-        s.end_time += datetime.timedelta(days=interval.days)
+        # s.end_time += datetime.timedelta(days=interval.days)
 
     schedules = list(schedule_not_repeated)
     for i in range(HOMEPAGE_SCHEDULE_DAY):

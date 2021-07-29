@@ -44,7 +44,6 @@ class Schedule(models.Model):
         ('W', 'Weekly'),
         ('M', 'Monthly')
     )
-    id = models.AutoField(primary_key=True)
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     description = models.CharField(max_length=50)
     type = models.CharField(max_length=10)
@@ -55,40 +54,19 @@ class Schedule(models.Model):
     weight = models.IntegerField(default=1)
     deadline = models.DateTimeField()
     expected_minutes_consumed = models.IntegerField(blank=True, null=True)
-    process = models.DecimalField(max_digits=3, decimal_places=2 , default= 0.00)
+    process = models.DecimalField(max_digits=3, decimal_places=2, default=0.00)
 
     def __str__(self):
         return self.description
 
 
-class Finished_Schedule(models.Model):
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
-    schedule =  models.ForeignKey("Schedule",on_delete=models.CASCADE)
-    description = models.CharField(max_length=50)
-    type = models.CharField(max_length=10)
-    is_repeated = models.BooleanField()
-    start_time = models.DateTimeField()
-    end_time = models.DateTimeField()
-    weight = models.IntegerField(default=1)
+class FinishedSchedule(models.Model):
+    schedule = models.ForeignKey(Schedule, on_delete=models.CASCADE)
+    minutes_consumed = models.IntegerField(blank=True, null=True)
+    finish_time = models.DateTimeField(auto_now_add=False, auto_now=True)
 
     def __str__(self):
-        return self.description
-
-
-class Today_Schedule(models.Model):
-    schedule =  models.ForeignKey("Schedule",on_delete=models.CASCADE)
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
-    description = models.CharField(max_length=50)
-    type = models.CharField(max_length=10)
-    is_repeated = models.BooleanField()
-    start_time = models.DateTimeField()
-    end_time = models.DateTimeField()
-    spend_time = models.IntegerField()
-    weight = models.IntegerField(default=1)
-    process = models.DecimalField(  max_digits = 3,decimal_places = 2)
-
-    def __str__(self):
-        return self.description
+        return self.schedule.description
 
 
 class GroupAssignment(models.Model):

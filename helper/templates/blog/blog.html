@@ -23,8 +23,8 @@
           <li><a href="{% url 'helper:blog_homepage' %}">我的博客</a></li>
           <li><a href="{% url 'helper:hot' 1 %}">热门博客</a></li>
           <li><a href="{% url 'helper:friends_admin' %}">我的好友</a></li>
-          <li><a href="{% url 'helper:home' %}">我的日程</a></li>
-          <li><a href="{% url 'helper:home' %}">小组任务</a></li>
+          <li><a href="{% url 'helper:schedule_home' %}">我的日程</a></li>
+          <li><a href="{% url 'helper:group_admin' %}">小组任务</a></li>
         </ul>
       </nav>
     </header>
@@ -49,7 +49,9 @@
         
         <form method="post">
             {% csrf_token %}
-            <input type="text" name="create_comment">
+            <label>
+                <input type="text" name="create_comment">
+            </label>
             <button name="create">发表评论</button>
         </form>
         

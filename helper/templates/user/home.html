@@ -23,7 +23,7 @@
           <li><a href="{% url 'helper:blog_homepage' %}">我的博客</a></li>
           <li><a href="{% url 'helper:hot' 1 %}">热门博客</a></li>
           <li><a href="{% url 'helper:friends_admin' %}">我的好友</a></li>
-          <li><a href="{% url 'helper:home' %}">我的日程</a></li>
+          <li><a href="{% url 'helper:schedule_home' %}">我的日程</a></li>
           <li><a href="{% url 'helper:group_admin' %}">小组任务</a></li>
         </ul>
       </nav>
@@ -62,7 +62,7 @@
             {% endfor %}
           </ol>
         {% endif %}
-        <p><a href="{% url 'helper:home' %}">查看更多</a><br></p>
+        <p><a href="{% url 'helper:schedule_home' %}">查看更多</a><br></p>
 
         <h2>小组任务</h2>
         {% if group_sub_assignments %}
@@ -72,7 +72,7 @@
             {% endfor %}
           </ol>
         {% endif %}
-        <p><a href="{% url 'helper:home' %}">查看更多</a><br></p>
+        <p><a href="{% url 'helper:group_admin' %}">查看更多</a><br></p>
       </aside>
 
     </main>

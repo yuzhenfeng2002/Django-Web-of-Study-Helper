@@ -2,7 +2,7 @@
 <html lang="zh">
   <head>
     <meta charset="utf-8">
-    <title>我的博客</title>
+    <title>小组管理</title>
     {% load static %}
     <link rel="stylesheet" href="{% static 'style.css' %}">
   </head>
@@ -31,35 +31,27 @@
 
     <main>
       <article>
-        <h2>最近发表</h2>
-        <p style="text-align: center;"><a href="{% url 'helper:blog_add' %}">新建博客</a> </p>
-        {% if blogs %}
-          {% for b in blogs %}
-            <h3><a href="{% url 'helper:blog_page' b.id %}">{{ b.title }}</a></h3>
-            <p>{{ b.created_time }} {{ b.pageview }}</p>
-            <p>{{ b.content|truncatewords:50 }}</p>
-          {% endfor %}
-        {% endif %}
+        <h2>今日日程</h2>
+        <p style="text-align: center"><a href="{% url 'helper:schedule_add' %}">新建日程</a></p>
+        <ul>
+            {% if schedules %}
+                {% for s in schedules %}
+                    <li>{{ s.description }} {{ s.start_time }} ~ {{ s.deadline }}</li>
+                    <form method="post">
+                        {% csrf_token %}
+                        <input type="hidden" name="finish_id" value="{{ s.id }}">
+                        {% if s.is_repeated %}
+                            <input type="number" name="time_consumed" placeholder="花费时间">
+                        {% endif %}
+                        <button name="agree">完成</button>
+                    </form>
+                {% endfor %}
+            {% endif %}
+        </ul>
       </article>
 
       <aside>
-        <h2>我的收藏</h2>
-        {% if collections %}
-            <ul>
-                {% for c in collections %}
-                <li><a href="{% url "helper:blog_page" c.blog.id %}">{{ c.blog.title }}</a></li>
-                {% endfor %}
-            </ul>
-        {% endif %}
 
-        <h2>我的博客</h2>
-        {% if blogs %}
-            <ul>
-                {% for b in blogs %}
-                <li><a href="{% url "helper:blog_page" b.id %}">{{ b.title }}</a></li>
-                {% endfor %}
-            </ul>
-        {% endif %}
       </aside>
 
     </main>

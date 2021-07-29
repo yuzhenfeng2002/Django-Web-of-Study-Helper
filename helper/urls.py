@@ -1,5 +1,5 @@
 from django.urls import path
-from .views import user, blog, group
+from .views import user, blog, schedule, group
 
 
 app_name = 'helper'
@@ -22,4 +22,7 @@ urlpatterns = [
     path('group/<int:pk>/', group.home, name='group_home'),
     path('group/<int:pk>/add_assign/', group.add_assign, name='assign_add'),
     path('group/<int:pk>/add_sub_assign/', group.add_sub_assign, name='sub_assign_add'),
+    path('schedule/', schedule.home, name='schedule_home'),
+    path('schedule/add/', schedule.add_todo_list, name='schedule_add'),
+    path('schedule/daily', schedule.daily_schedules, name='schedule_daily'),
 ]

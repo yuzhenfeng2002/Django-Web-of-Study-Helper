@@ -2,37 +2,28 @@ from django.shortcuts import render, get_object_or_404
 from django import forms
 from django.contrib.auth.models import User
 from django.contrib.auth.decorators import login_required
-from django.http import HttpResponseRedirect, HttpResponseForbidden, HttpResponseNotFound
-from helper import models
+from django.http import HttpResponseRedirect, HttpResponseForbidden
 from django.urls import reverse
+from helper import models
 
 
 class SubAssignmentForm(forms.Form):
-    """
-    用于新建子任务
-    """
-    description = forms.CharField(required=True, max_length=50)
-    pre_sub_assignment = forms.CharField(required=False, max_length=50)
-    start_time = forms.DateTimeField(required=True)
-    deadline = forms.DateTimeField(required=True)
-    user = forms.ModelChoiceField(queryset=User.objects.all(), required=True)
-    assignment = forms.ModelChoiceField(queryset=models.GroupAssignment.objects.all(), required=True)
-    weight = forms.IntegerField(required=True, max_value=100)
-    expected_minutes_consumed = forms.IntegerField(required=True)
+    description = forms.CharField(label='子任务描述', required=True, max_length=50)
+    pre_sub_assignment = forms.CharField(label='前置子任务', required=False, max_length=50)
+    start_time = forms.DateTimeField(label='开始时间', required=True)
+    deadline = forms.DateTimeField(label='截止日期', required=True)
+    user = forms.ModelChoiceField(label='用户', queryset=User.objects.all(), required=True)
+    assignment = forms.ModelChoiceField(label='父任务', queryset=models.GroupAssignment.objects.all(), required=True)
+    weight = forms.IntegerField(label='权重', required=True, max_value=100)
+    expected_minutes_consumed = forms.IntegerField(label='预期花费时间', required=True)
 
 
 class GroupForm(forms.Form):
-    """
-    用于新建小组
-    """
     type = forms.CharField(label='小组类型', required=True, max_length=20)
     group_name = forms.CharField(label='小组名称', required=True, max_length=20)
 
 
 class AssignmentForm(forms.Form):
-    """
-    用于新建小组任务
-    """
     description = forms.CharField(label='任务描述', required=True, max_length=1000)
     deadline = forms.DateTimeField(label='截止日期', required=True)
 
@@ -106,7 +97,7 @@ def add_sub_assign(request, pk):
                                                 user_id=user.id,
                                                 description=description,
                                                 weight=weight, deadline=deadline, expected_minutes_consumed=emc)
-            models.Schedule.objects.create(user_id=user.id, description=description, type="Study", is_repeated=False,
+            models.Schedule.objects.create(user_id=user.id, description=description, type="学习", is_repeated=False,
                                            is_done=False, start_time=start_time, weight=weight, deadline=deadline,
                                            expected_minutes_consumed=emc, process=0)
         return HttpResponseRedirect(reverse('helper:group_home', args=(pk, )))

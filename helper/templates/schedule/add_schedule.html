@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="zh">
+  <head>
+    <meta charset="utf-8">
+    <title>日程</title>
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'style.css' %}">
+  </head>
+
+  <body>
+    <header>
+      <h1>我的学习助手</h1>
+    </header>
+
+    <main>
+      <form method="post">
+        {% csrf_token %}
+        {{ form }}
+        <input type="submit" value="提交">
+        {% if message %}
+          <p>{{ message }}</p>
+        {% endif %}
+      </form>
+    </main>
+
+    <footer>
+      <p>本站点遵守 MIT 协议。原始版本由 Yuzhen FENG 于 2021 年编写。</p>
+    </footer>
+
+    </body>
+</html>

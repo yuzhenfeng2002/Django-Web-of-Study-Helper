@@ -131,7 +131,7 @@ footer {
   margin-top: 10px;
 }
 
-input[type=text], [type=password], [type=email], select {
+input[type=text], [type=password], [type=email], [type=number], select {
   width: 100%;
   padding: 12px 20px;
   margin: 8px 0;
