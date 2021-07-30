@@ -44,7 +44,13 @@
         <form method="post">
             {% csrf_token %}
             <input type="hidden" name="collect_blog">
-            <button name="collect">收藏博客</button>
+            <button name="collect">
+                {% if is_collected == True %}
+                    取消收藏
+                {% else %}
+                    收藏博客
+                {% endif %}
+            </button>
         </form>
         
         <form method="post">

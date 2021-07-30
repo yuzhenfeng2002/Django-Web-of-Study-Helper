@@ -20,15 +20,11 @@ class ModifyForm(forms.Form):
 def home(request):
     user = request.user
 
-    blogs = Blog.objects.filter(user_id__exact=user.id).order_by('modified_time')
-    title_ids = list(map(lambda b: (b.title, b.id), blogs))
-    collections = Collection.objects.filter(user_id__exact=user.id).order_by('blog__collect_amount')
-    # if len(blogs) > BLOGPAGE_BLOG_NUMBER:
-    #     blogs = blogs[:BLOGPAGE_BLOG_NUMBER]
+    blogs = Blog.objects.filter(user_id__exact=user.id).order_by('-modified_time')
+    collections = Collection.objects.filter(user_id__exact=user.id).order_by('-blog__collect_amount')
     return render(request, '../templates/blog/home.html',
                   {
                       'blogs': blogs,
-                      # 'title_ids': title_ids,
                       'collections': collections
                   })
 
@@ -36,7 +32,11 @@ def home(request):
 @login_required
 def blog(request, pk):
     blog = get_object_or_404(Blog, pk=pk)
-    user = request.user
+    user: User = request.user
+    if user.collection_set.filter(blog_id__exact=blog.pk).count() == 0:
+        is_collected = False
+    else:
+        is_collected = True
     comments = blog.comment_set.all().order_by('created_time')
     if request.method == 'POST':
         delete_comment = request.POST.get('delete_comment')
@@ -68,7 +68,8 @@ def blog(request, pk):
         blog.pageview += 1
         blog.save()
 
-    return render(request, '../templates/blog/blog.html', {'blog': blog, 'comments': comments, 'user': user})
+    return render(request, '../templates/blog/blog.html',
+                  {'blog': blog, 'comments': comments, 'user': user, 'is_collected': is_collected})
 
 
 @login_required

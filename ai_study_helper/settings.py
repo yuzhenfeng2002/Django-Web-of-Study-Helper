@@ -23,7 +23,7 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 SECRET_KEY = 'smf$j!swv8y&(lr()f*ppp1b=h43%n0n%^a=nh($p*=2q35b^%'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
 ALLOWED_HOSTS = ['*']
 
@@ -78,7 +78,7 @@ WSGI_APPLICATION = 'ai_study_helper.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'web_test',
+        'NAME': 'ai_study_helper',
         'USER': 'WebProject2021',
         'PASSWORD': 'Web@2021!',
         'HOST': '47.103.73.100',

@@ -63,7 +63,7 @@
         <form method="post">
             {% csrf_token %}
             <label>
-                <input type="text" name="apply_id">
+                <input type="text" name="apply_id" maxlength="7">
             </label>
             <button name="apply">发起申请</button>
         </form>

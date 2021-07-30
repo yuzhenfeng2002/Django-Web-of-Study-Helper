@@ -33,7 +33,7 @@ def group_admin(request):
     user = request.user
     leader_groups = None
     if request.method == 'POST':
-        add_group = request.POST.get('add')
+        add_group = request.POST.get('group_name')
         leader_id = request.POST.get('leader_id')
         group_id = request.POST.get('group_id')
         if not(add_group is None):
@@ -99,22 +99,22 @@ def add_sub_assign(request, pk):
                                                 weight=weight, deadline=deadline, expected_minutes_consumed=emc)
             models.Schedule.objects.create(user_id=user.id, description=description, type="学习", is_repeated=False,
                                            is_done=False, start_time=start_time, weight=weight, deadline=deadline,
-                                           expected_minutes_consumed=emc, process=0)
+                                           expected_minutes_consumed=emc)
         return HttpResponseRedirect(reverse('helper:group_home', args=(pk, )))
 
 
 @login_required
 def add_assign(request, pk):
+    user = request.user
+    group = get_object_or_404(models.Group, pk=pk)
+    if user.id != group.leader.id:
+        return HttpResponseForbidden
     if request.method == "GET":
         form = AssignmentForm()
         return render(request, "../templates/group/add_assign.html", {'form': form})
     else:
         form = AssignmentForm(request.POST)
         if form.is_valid():
-            user = request.user
-            group = get_object_or_404(models.Group, pk=pk)
-            if user.id != group.leader.id:
-                return HttpResponseForbidden
             models.GroupAssignment.objects.create(description=form.cleaned_data['description'],
                                                   deadline=form.cleaned_data['deadline'],
                                                   group_id=pk)

@@ -184,30 +184,21 @@ def pwd_change(request):
 
 
 def get_aside(user):
-    schedule_not_repeated = user.schedule_set.filter(
-        deadline__range=(timezone.now(), timezone.now() + datetime.timedelta(days=HOMEPAGE_SCHEDULE_DAY)),
-        is_repeated__exact=False)
+    schedule_not_repeated = user.schedule_set.filter(is_done__exact=False, is_repeated__exact=False)
     schedule_daily = user.schedule_set.filter(is_repeated__exact=True, repeat_cycle__exact='D',
                                               deadline__gte=timezone.now(), start_time__lte=timezone.now())
     schedule_weekly = user.schedule_set.filter(is_repeated__exact=True, repeat_cycle__exact='W',
-                                               deadline__range=(
-                                                   timezone.now(),
-                                                   timezone.now() + datetime.timedelta(days=HOMEPAGE_SCHEDULE_DAY)))
+                                               deadline__gte=timezone.now(), start_time__lte=timezone.now())
     schedule_monthly = user.schedule_set.filter(is_repeated__exact=True, repeat_cycle__exact='M',
-                                                deadline__range=
-                                                (timezone.now(),
-                                                 timezone.now() + datetime.timedelta(days=HOMEPAGE_SCHEDULE_DAY)))
-
-    print(len(schedule_not_repeated), len(schedule_daily), len(schedule_weekly), len(schedule_monthly))
+                                                deadline__gte=timezone.now(), start_time__lte=timezone.now())
 
     def update_time(s):
         interval = time.date() - s.start_time.date()
         s.start_time += datetime.timedelta(days=interval.days)
-        # s.end_time += datetime.timedelta(days=interval.days)
 
     schedules = list(schedule_not_repeated)
     for i in range(HOMEPAGE_SCHEDULE_DAY):
-        time = timezone.now() + datetime.timedelta(days=i)
+        time = datetime.datetime.now() + datetime.timedelta(days=i)
         for j in range(len(schedule_daily)):
             s = copy.copy(schedule_daily[j])
             update_time(s)
@@ -224,10 +215,7 @@ def get_aside(user):
                 schedules.append(s)
     schedules.sort(key=lambda sc: sc.start_time)
 
-    group_sub_assignments = user.subassignment_set. \
-        filter(deadline__range=(timezone.now(),
-                                timezone.now() +
-                                datetime.timedelta(days=HOMEPAGE_SCHEDULE_DAY))).order_by('deadline')
+    group_sub_assignments = user.subassignment_set.all().order_by('deadline')
 
     friends = Friend.objects.filter(user_id__exact=user.id, authority__gte=1)
     return schedules, group_sub_assignments, friends
@@ -243,7 +231,7 @@ def home(request):
                                   modified_time__gte
                                   =timezone.now() - datetime.timedelta(days=HOMEPAGE_HOT_BLOG_DAY)) |
                                 Q(modified_time__gte
-                                  =timezone.now() - datetime.timedelta(days=HOMEPAGE_COMMON_BLOG_DAY))).distinct().order_by('-modified_time')
+                                  =timezone.now() - datetime.timedelta(days=HOMEPAGE_COMMON_BLOG_DAY))).distinct().order_by('-pageview')
     if len(blogs) > HOMEPAGE_BLOG_NUMBER:
         blogs = blogs[:HOMEPAGE_BLOG_NUMBER]
 
@@ -286,8 +274,11 @@ def friends_admin(request):
         if not(apply_id is None):
             friend = Friend.objects.filter(user_id__exact=user.id, friend__username__exact=apply_id)
             if len(friend) == 0:
-                new_friend = Friend(user=user, friend=User.objects.filter(username__exact=apply_id)[0], authority=0)
-                new_friend.save()
+                try:
+                    new_friend = Friend(user=user, friend=User.objects.filter(username__exact=apply_id)[0], authority=0)
+                    new_friend.save()
+                except IndexError:
+                    pass
 
     friends = Friend.objects.filter(user_id__exact=user.id, authority__gte=1)
     friends_not_authorised = Friend.objects.filter(friend_id__exact=user.id, authority__exact=0)

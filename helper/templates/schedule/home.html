@@ -51,10 +51,10 @@
                     <form method="post">
                         {% csrf_token %}
                         <input type="hidden" name="finish_id" value="{{ s.id }}">
-                        {% if s.is_repeated %}
+                        {% if False %}
                             <input type="number" name="time_consumed" placeholder="花费时间">
+                            <button name="agree">完成</button>
                         {% endif %}
-                        <button name="agree">完成</button>
                     </form>
                 {% endfor %}
             {% endif %}

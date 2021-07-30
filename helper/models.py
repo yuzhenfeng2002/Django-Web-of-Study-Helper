@@ -54,7 +54,6 @@ class Schedule(models.Model):
     weight = models.IntegerField(default=1)
     deadline = models.DateTimeField()
     expected_minutes_consumed = models.IntegerField(blank=True, null=True)
-    process = models.DecimalField(max_digits=3, decimal_places=2, default=0.00)
 
     def __str__(self):
         return self.description

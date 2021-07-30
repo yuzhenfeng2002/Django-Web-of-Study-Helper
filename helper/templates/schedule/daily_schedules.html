@@ -36,11 +36,17 @@
         <ul>
             {% if schedules %}
                 {% for s in schedules %}
-                    <li>{{ s.description }} {{ s.start_time }} ~ {{ s.deadline }}</li>
+                    <li>{{ s.description }}
+                        {% if s.is_repeated %}
+                            {{ s.start_time }} ~ {{ s.deadline }}
+                        {% else %}
+                            截止日期：{{ s.deadline }}
+                        {% endif %}
+                    </li>
                     <form method="post">
                         {% csrf_token %}
                         <input type="hidden" name="finish_id" value="{{ s.id }}">
-                        {% if s.is_repeated %}
+                        {% if True %}
                             <input type="number" name="time_consumed" placeholder="花费时间">
                         {% endif %}
                         <button name="agree">完成</button>

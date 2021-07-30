@@ -4,8 +4,8 @@ from django.forms import Form
 from django.forms import fields
 from django.http import HttpResponseRedirect
 from django.urls import reverse
-from helper import models
 from django.utils import timezone
+from helper import models
 import datetime
 import copy
 from .settings import *
@@ -53,14 +53,12 @@ def add_todo_list(request):
             emc = form.cleaned_data['expected_minutes_consumed']
             models.Schedule.objects.create(user_id=user.id, description=description, type=type, is_repeated=is_repeated,
                                            is_done=False, start_time=start_time, weight=weight, deadline=deadline,
-                                           expected_minutes_consumed=emc, process=0, repeat_cycle=repeat_cycle)
+                                           expected_minutes_consumed=emc, repeat_cycle=repeat_cycle)
         return HttpResponseRedirect(reverse("helper:schedule_home"))
 
 
 def get_schedules(user, search_day_num):
-    schedule_not_repeated = user.schedule_set.filter(
-        deadline__range=(timezone.now(), timezone.now() + datetime.timedelta(days=search_day_num)),
-        is_repeated__exact=False, process__lt=1)
+    schedule_not_repeated = user.schedule_set.filter(is_done__exact=False, is_repeated__exact=False)
     schedule_daily = user.schedule_set.filter(is_repeated__exact=True, repeat_cycle__exact='D',
                                               deadline__gte=timezone.now(), start_time__lte=timezone.now())
     schedule_weekly = user.schedule_set.filter(is_repeated__exact=True, repeat_cycle__exact='W',
@@ -84,7 +82,7 @@ def get_schedules(user, search_day_num):
 
     schedules = list(schedule_not_repeated)
     for i in range(search_day_num):
-        time = timezone.now() + datetime.timedelta(days=i)
+        time = datetime.datetime.now() + datetime.timedelta(days=i)
         for j in range(len(schedule_daily)):
             s = copy.copy(schedule_daily[j])
             update_time(s, i, schedules)
@@ -114,7 +112,7 @@ def home(request):
             schedule = models.Schedule.objects.filter(id=finish_id)[0]
             if not schedule.is_repeated:
                 models.FinishedSchedule.objects.create(schedule_id=finish_id)
-                schedule.process = 1
+                schedule.is_done = True
                 schedule.save()
             elif not (time_consumed is None):
                 models.FinishedSchedule.objects.create(schedule_id=finish_id, minutes_consumed=time_consumed)
@@ -139,11 +137,14 @@ def daily_schedules(request):
             schedule = models.Schedule.objects.filter(id=finish_id)[0]
             if not schedule.is_repeated:
                 models.FinishedSchedule.objects.create(schedule_id=finish_id)
-                schedule.process = 1
+                schedule.is_done = True
                 schedule.save()
             elif not (time_consumed is None):
                 models.FinishedSchedule.objects.create(schedule_id=finish_id, minutes_consumed=time_consumed)
             else:
                 models.FinishedSchedule.objects.create(schedule_id=finish_id)
     schedules = get_schedules(user, 1)
+    for s in schedules:
+        if s.is_repeated:
+            s.deadline = s.start_time + datetime.timedelta(minutes=s.expected_minutes_consumed)
     return render(request, "../templates/schedule/daily_schedules.html", {'schedules': schedules})
