@@ -1,6 +1,6 @@
 from django import forms
-from django.shortcuts import render, get_object_or_404
-from django.http import HttpResponseRedirect, HttpResponseForbidden
+from django.shortcuts import render
+from django.http import HttpResponseRedirect
 from django.urls import reverse
 from django.utils import timezone
 from django.contrib.auth.decorators import login_required
@@ -8,7 +8,6 @@ from django.contrib import auth
 from django.db.models import Q
 from ..models import *
 from .settings import *
-import re
 import datetime
 import copy
 
@@ -26,58 +25,10 @@ class RegistrationForm(forms.Form):
     password1 = forms.CharField(label='密码', widget=forms.PasswordInput)
     password2 = forms.CharField(label='再次输入密码', widget=forms.PasswordInput)
 
-    def clean_user_id(self):
-        user_id = self.cleaned_data.get('user_id')
-        user_type = self.cleaned_data.get('user_type')
-        if user_type == 'S' and len(user_id) != 7:
-            raise forms.ValidationError("请输入有效的学号。")
-        elif user_type == 'T' and len(user_id) != 5:
-            raise forms.ValidationError("请输入有效的工号。")
-        else:
-            filter_result = User.objects.filter(username__exact=user_id)
-            if len(filter_result) > 0:
-                raise forms.ValidationError("您的学/工号已被注册过。")
-            return user_id
-
-    def clean_email(self):
-        pattern = re.compile(r"\"?([-a-zA-Z0-9.'?{}]+@\w+\.\w+)\"?")
-        email = self.cleaned_data.get('email')
-        if re.match(pattern, email):
-            filter_result = User.objects.filter(email__exact=email)
-            if len(filter_result) > 0:
-                raise forms.ValidationError("您的邮箱已被注册过。")
-        else:
-            raise forms.ValidationError("请输入有效的邮箱。")
-        return email
-
-    def clean_password1(self):
-        password1 = self.cleaned_data.get('password1')
-        if len(password1) <= 6:
-            raise forms.ValidationError("您的密码太短，请重新输入。")
-        return password1
-
-    def clean_password2(self):
-        password1 = self.cleaned_data.get('password1')
-        password2 = self.cleaned_data.get('password2')
-        if password1 and password2 and password1 != password2:
-            raise forms.ValidationError('两次输入的密码不一致，请重新输入')
-        return password2
-
 
 class LoginForm(forms.Form):
     email = forms.EmailField(label='邮箱')
     password = forms.CharField(label='密码', widget=forms.PasswordInput)
-
-    def clean_email(self):
-        pattern = re.compile(r"\"?([-a-zA-Z0-9.'?{}]+@\w+\.\w+)\"?")
-        email = self.cleaned_data.get('email')
-        if re.match(pattern, email):
-            filter_result = User.objects.filter(email__exact=email)
-            if len(filter_result) == 0:
-                raise forms.ValidationError("邮箱不存在。")
-        else:
-            raise forms.ValidationError("请输入有效的邮箱。")
-        return email
 
 
 class PwdChangeForm(forms.Form):
@@ -86,21 +37,9 @@ class PwdChangeForm(forms.Form):
     password1 = forms.CharField(label='密码', widget=forms.PasswordInput)
     password2 = forms.CharField(label='再次输入密码', widget=forms.PasswordInput)
 
-    def clean_password1(self):
-        password1 = self.cleaned_data.get('password1')
-        if len(password1) <= 6:
-            raise forms.ValidationError("您的密码太短，请重新输入。")
-        return password1
-
-    def clean_password2(self):
-        password1 = self.cleaned_data.get('password1')
-        password2 = self.cleaned_data.get('password2')
-        if password1 and password2 and password1 != password2:
-            raise forms.ValidationError('两次输入的密码不一致，请重新输入')
-        return password2
-
 
 def register(request):
+    message = None
     if request.method == 'POST':
         form = RegistrationForm(request.POST)
         if form.is_valid():
@@ -110,17 +49,35 @@ def register(request):
             gender = form.cleaned_data['gender']
             user_type = form.cleaned_data['user_type']
             class_name = form.cleaned_data['class_name']
-            password = form.cleaned_data['password1']
+            password1 = form.cleaned_data['password1']
+            password2 = form.cleaned_data['password2']
 
-            user = User.objects.create_user(username=user_id, password=password, email=email)
+            if user_type == 'S' and len(user_id) != 7:
+                message = "请输入有效的学号。"
+            elif user_type == 'T' and len(user_id) != 5:
+                message = "请输入有效的工号。"
+            else:
+                filter_result = User.objects.filter(username__exact=user_id)
+                if len(filter_result) > 0:
+                    message = "您的学/工号已被注册过。"
+
+            filter_result = User.objects.filter(email__exact=email)
+            if len(filter_result) > 0:
+                message = "您的邮箱已被注册过。"
+
+            if password1 and password2 and password1 != password2:
+                message = '两次输入的密码不一致，请重新输入'
+
+            user = User.objects.create_user(username=user_id, password=password1, email=email)
 
             user_profile = Profile(class_name=class_name, type=user_type, gender=gender, user=user, name=user_name)
             user_profile.save()
 
-            return HttpResponseRedirect(reverse("helper:login"))
+            if message is None:
+                return HttpResponseRedirect(reverse("helper:login"))
     else:
         form = RegistrationForm()
-    return render(request, '../templates/user/register.html', {'form': form})
+    return render(request, '../templates/user/register.html', {'form': form, 'message': message})
 
 
 def login(request):
@@ -132,12 +89,20 @@ def login(request):
             user = User.objects.filter(email__exact=email)
             user_id = user.get().username
             user = auth.authenticate(username=user_id, password=password)
+
+            filter_result = User.objects.filter(email__exact=email)
+            if len(filter_result) == 0:
+                message = "邮箱不存在。"
+                return render(request, '../templates/user/login.html',
+                              {'form': form, 'message': message})
+
             if user is not None and user.is_active:
                 auth.login(request, user)
                 return HttpResponseRedirect(reverse('helper:home'))
             else:
+                message = '密码错误，请重新输入！'
                 return render(request, '../templates/user/login.html',
-                              {'form': form, 'message': '密码错误，请重新输入！'})
+                              {'form': form, 'message': message})
     else:
         form = LoginForm()
     return render(request, '../templates/user/login.html', {'form': form})
@@ -169,8 +134,12 @@ def pwd_change(request):
             user = auth.authenticate(username=username, password=password)
 
             if user is not None and user.is_active:
-                new_password = form.cleaned_data['password2']
-                user.set_password(new_password)
+                password1 = form.cleaned_data['password1']
+                password2 = form.cleaned_data['password2']
+                if password1 and password2 and password1 != password2:
+                    return render(request, '../templates/user/pwd_change.html',
+                                  {'form': form, 'user': user, 'message': '两次输入的密码不一致，请重新输入！'})
+                user.set_password(password2)
                 user.save()
                 return HttpResponseRedirect(reverse('helper:login'))
 
@@ -248,7 +217,7 @@ def home(request):
 @login_required
 def friends_admin(request):
     user = request.user
-
+    message = None
     if request.method == 'POST':
         delete_id = request.POST.get('delete_id')
         agree_id = request.POST.get('agree_id')
@@ -257,7 +226,7 @@ def friends_admin(request):
             try:
                 Friend.objects.filter(user_id__exact=delete_id, friend_id__exact=user.id)[0].delete()
             except IndexError:
-                pass
+                message = "您没有此好友。"
             try:
                 Friend.objects.filter(user_id__exact=user.id, friend_id__exact=delete_id)[0].delete()
             except IndexError:
@@ -278,7 +247,9 @@ def friends_admin(request):
                     new_friend = Friend(user=user, friend=User.objects.filter(username__exact=apply_id)[0], authority=0)
                     new_friend.save()
                 except IndexError:
-                    pass
+                    message = "您的好友尚未注册账号。"
+            else:
+                message = "您已发送好友申请或添加好友。"
 
     friends = Friend.objects.filter(user_id__exact=user.id, authority__gte=1)
     friends_not_authorised = Friend.objects.filter(friend_id__exact=user.id, authority__exact=0)
@@ -286,5 +257,6 @@ def friends_admin(request):
     return render(request, '../templates/user/friends_admin.html',
                   {
                       'friends': friends,
-                      'friends_not_authorised': friends_not_authorised
+                      'friends_not_authorised': friends_not_authorised,
+                      'message': message
                   })
