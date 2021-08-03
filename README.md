@@ -4,6 +4,8 @@
 
 该项目的GitHub地址为：[https://github.com/Feng-Yz/Study-Helper](https://github.com/Feng-Yz/Study-Helper)
 
+或：[https://github.com/Weber-LiWb/AI-Study-Helper](https://github.com/Weber-LiWb/AI-Study-Helper)
+
 通过IP地址可以访问该项目网站：[http://47.103.73.100](http://47.103.73.100)
 
 ## 1 功能设计
