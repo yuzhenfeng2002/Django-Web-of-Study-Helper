@@ -120,10 +120,12 @@ def home(request):
                 models.FinishedSchedule.objects.create(schedule_id=finish_id)
 
     schedules = get_schedules(user, search_day_num)
+    daily_schedules = get_schedules(user, 1)
     return render(request, "../templates/schedule/home.html",
                   {
                       'schedules': schedules,
-                      'day_num': search_day_num
+                      'day_num': search_day_num,
+                      'daily_schedules': daily_schedules
                   })
 
 

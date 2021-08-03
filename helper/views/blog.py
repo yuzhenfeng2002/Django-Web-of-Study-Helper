@@ -58,8 +58,10 @@ def blog(request, pk):
                 blog.collect_amount += 1
                 blog.save()
                 new_collection.save()
+                is_collected = True
             else:
                 collection.delete()
+                is_collected = False
 
         if not (create_comment is None):
             new_comment = Comment(user=user, blog=blog, content=create_comment)

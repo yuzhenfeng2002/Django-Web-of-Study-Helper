@@ -68,12 +68,10 @@ def register(request):
             if password1 and password2 and password1 != password2:
                 message = '两次输入的密码不一致，请重新输入'
 
-            user = User.objects.create_user(username=user_id, password=password1, email=email)
-
-            user_profile = Profile(class_name=class_name, type=user_type, gender=gender, user=user, name=user_name)
-            user_profile.save()
-
             if message is None:
+                user = User.objects.create_user(username=user_id, password=password1, email=email)
+                user_profile = Profile(class_name=class_name, type=user_type, gender=gender, user=user, name=user_name)
+                user_profile.save()
                 return HttpResponseRedirect(reverse("helper:login"))
     else:
         form = RegistrationForm()
