@@ -203,7 +203,7 @@
                                         <label>
                                             <input type="number" name="search_day_num" value="{{ day_num }}">
                                         </label>
-                                        <button type="button" class="btn btn-primary" name="search">查询</button>
+                                        <button name="search" class="btn btn-primary">查询</button>
                                     </form>
                                     <ul>
                                         {% if schedules %}
@@ -237,8 +237,8 @@
                                     <p style="text-align: center">
                                         <a target="_blank" href="{% url 'helper:schedule_add' %}">新建日程</a></p>
                                     <ul>
-                                        {% if schedules %}
-                                            {% for s in schedules %}
+                                        {% if daily_schedules %}
+                                            {% for s in daily_schedules %}
                                                 <li>{{ s.description }}
                                                     {% if s.is_repeated %}
                                                         {{ s.start_time }} ~ {{ s.deadline }}

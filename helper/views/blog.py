@@ -12,8 +12,9 @@ import math
 
 
 class ModifyForm(forms.Form):
-    title = forms.CharField(label='标题', max_length=50)
-    content = forms.CharField(label='博客内容', widget=forms.Textarea)
+    title = forms.CharField(label='标题', max_length=50,
+                            widget=forms.TextInput(attrs={'class': 'form-control form-control-user mb-5'}))
+    content = forms.CharField(label='博客内容', widget=forms.Textarea(attrs={'class': 'form-control form-control-user mb-5'}))
 
 
 @login_required
@@ -150,7 +151,7 @@ def hot(request, pg):
 def public(request, friend_id):
     user: User = request.user
     friend = Friend.objects.filter(user_id__exact=user.id, friend_id__exact=friend_id)
-    if len(friend) == 0:
+    if len(friend) == 0 and friend_id != user.id:
         return HttpResponseForbidden
 
     blogs = Blog.objects.filter(user_id__exact=friend_id)

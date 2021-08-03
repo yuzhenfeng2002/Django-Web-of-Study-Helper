@@ -2,6 +2,7 @@ from django.shortcuts import render
 from django.contrib.auth.decorators import login_required
 from django.forms import Form
 from django.forms import fields
+from django import forms
 from django.http import HttpResponseRedirect
 from django.urls import reverse
 from django.utils import timezone
@@ -13,7 +14,7 @@ from .settings import *
 
 class TodoForm(Form):
     CYCLE_CHOICES = (
-        ('N', '----'),
+        ('N', '不重复'),
         ('D', '每天'),
         ('W', '每周'),
         ('M', '每月')
@@ -22,21 +23,30 @@ class TodoForm(Form):
         (False, '不重复'),
         (True, '重复')
     )
-    description = fields.CharField(label='日程描述', required=True, max_length=50)
-    type = fields.CharField(label='日程类型', required=True, max_length=2)
-    weight = fields.IntegerField(label='权重', required=True, max_value=100)
-    is_repeated = fields.ChoiceField(label='是否重复', choices=REPEAT_CYCLE)
-    repeat_cycle = fields.ChoiceField(label='重复周期', required=False, choices=CYCLE_CHOICES)
-    start_time = fields.DateTimeField(label='开始时间', required=True)
-    deadline = fields.DateTimeField(label='截止日期', required=True)
-    expected_minutes_consumed = fields.IntegerField(label='预期花费时间', required=False)
+    description = fields.CharField(label='日程描述', required=True, max_length=50,
+                                   widget=forms.TextInput(attrs={
+                                       'class': 'form-control form-control-user mb-5'
+                                   }))
+    type = fields.CharField(label='日程类型', required=True, max_length=2,
+                            widget=forms.TextInput(attrs={'class': 'form-control form-control-user mb-5'}))
+    weight = fields.IntegerField(label='权重', required=True, max_value=100,
+                                 widget=forms.NumberInput(attrs={'class': 'form-control form-control-user mb-5'}))
+    is_repeated = fields.ChoiceField(label='是否重复', choices=REPEAT_CYCLE, widget=forms.RadioSelect)
+    repeat_cycle = fields.ChoiceField(label='重复周期', required=False, choices=CYCLE_CHOICES, widget=forms.RadioSelect)
+    start_time = fields.DateTimeField(label='开始时间', required=True,
+                                      widget=forms.DateTimeInput(attrs={'class': 'form-control form-control-user mb-5'}))
+    deadline = fields.DateTimeField(label='截止时间', required=True,
+                                    widget=forms.DateTimeInput(attrs={'class': 'form-control form-control-user mb-5'}))
+    expected_minutes_consumed = fields.IntegerField(label='预期花费时间', required=False,
+                                                    widget=forms.NumberInput(
+                                                        attrs={'class': 'form-control form-control-user mb-5'}))
 
 
 @login_required
 def add_todo_list(request):
     if request.method == "GET":
         form = TodoForm()
-        return render(request, "../templates/schedule/add_schedule.html", {'form':form})
+        return render(request, "../templates/schedule/add_schedule.html", {'form': form})
     else:
         form = TodoForm(request.POST)
         if form.is_valid():
@@ -54,17 +64,20 @@ def add_todo_list(request):
             models.Schedule.objects.create(user_id=user.id, description=description, type=type, is_repeated=is_repeated,
                                            is_done=False, start_time=start_time, weight=weight, deadline=deadline,
                                            expected_minutes_consumed=emc, repeat_cycle=repeat_cycle)
-        return HttpResponseRedirect(reverse("helper:schedule_home"))
+            return HttpResponseRedirect(reverse("helper:schedule_home"))
+        else:
+            message = "添加失败！"
+            return render(request, "../templates/schedule/add_schedule.html", {'form': form, 'message': message})
 
 
 def get_schedules(user, search_day_num):
     schedule_not_repeated = user.schedule_set.filter(is_done__exact=False, is_repeated__exact=False)
     schedule_daily = user.schedule_set.filter(is_repeated__exact=True, repeat_cycle__exact='D',
-                                              deadline__gte=timezone.now(), start_time__lte=timezone.now())
+                                              deadline__gte=timezone.now())
     schedule_weekly = user.schedule_set.filter(is_repeated__exact=True, repeat_cycle__exact='W',
-                                               deadline__gte=timezone.now(), start_time__lte=timezone.now())
+                                               deadline__gte=timezone.now())
     schedule_monthly = user.schedule_set.filter(is_repeated__exact=True, repeat_cycle__exact='M',
-                                                deadline__gte=timezone.now(), start_time__lte=timezone.now())
+                                                deadline__gte=timezone.now())
 
     def update_time(s, i, schedules):
         time = datetime.datetime.now() + datetime.timedelta(days=i)
@@ -121,6 +134,8 @@ def home(request):
 
     schedules = get_schedules(user, search_day_num)
     daily_schedules = get_schedules(user, 1)
+    for ds in daily_schedules:
+        ds.deadline = ds.start_time + datetime.timedelta(minutes=ds.expected_minutes_consumed)
     return render(request, "../templates/schedule/home.html",
                   {
                       'schedules': schedules,

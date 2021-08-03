@@ -8,14 +8,23 @@ from helper import models
 
 
 class SubAssignmentForm(forms.Form):
-    description = forms.CharField(label='子任务描述', required=True, max_length=50)
-    pre_sub_assignment = forms.CharField(label='前置子任务', required=False, max_length=50)
-    start_time = forms.DateTimeField(label='开始时间', required=True)
-    deadline = forms.DateTimeField(label='截止日期', required=True)
-    user = forms.ModelChoiceField(label='用户', queryset=User.objects.all(), required=True)
-    assignment = forms.ModelChoiceField(label='父任务', queryset=models.GroupAssignment.objects.all(), required=True)
-    weight = forms.IntegerField(label='权重', required=True, max_value=100)
-    expected_minutes_consumed = forms.IntegerField(label='预期花费时间', required=True)
+    description = forms.CharField(label='子任务描述', required=True, max_length=50,
+                                  widget=forms.TextInput(attrs={'class': 'form-control form-control-user mb-5'}))
+    pre_sub_assignment = forms.CharField(label='前置子任务', required=False, max_length=50,
+                                         widget=forms.TextInput(attrs={'class': 'form-control form-control-user mb-5'}))
+    start_time = forms.DateTimeField(label='开始时间', required=True,
+                                     widget=forms.DateTimeInput(attrs={'class': 'form-control form-control-user mb-5'}))
+    deadline = forms.DateTimeField(label='截止日期', required=True,
+                                   widget=forms.DateTimeInput(attrs={'class': 'form-control form-control-user mb-5'}))
+    user = forms.ModelChoiceField(label='用户', queryset=User.objects.all(), required=True,
+                                  widget=forms.Select(attrs={'class': 'form-control form-control-user mb-5'}))
+    assignment = forms.ModelChoiceField(label='父任务', queryset=models.GroupAssignment.objects.all(), required=True,
+                                        widget=forms.Select(attrs={'class': 'form-control form-control-user mb-5'}))
+    weight = forms.IntegerField(label='权重', required=True, max_value=100,
+                                widget=forms.NumberInput(attrs={'class': 'form-control form-control-user mb-5'}))
+    expected_minutes_consumed = forms.IntegerField(label='预期花费时间', required=True,
+                                                   widget=forms.NumberInput(
+                                                       attrs={'class': 'form-control form-control-user mb-5'}))
 
 
 class GroupForm(forms.Form):
@@ -24,8 +33,10 @@ class GroupForm(forms.Form):
 
 
 class AssignmentForm(forms.Form):
-    description = forms.CharField(label='任务描述', required=True, max_length=1000)
-    deadline = forms.DateTimeField(label='截止日期', required=True)
+    description = forms.CharField(label='任务描述', required=True, max_length=1000,
+                                  widget=forms.TextInput(attrs={'class': 'form-control form-control-user mb-5'}))
+    deadline = forms.DateTimeField(label='截止日期', required=True,
+                                   widget=forms.DateTimeInput(attrs={'class': 'form-control form-control-user mb-5'}))
 
 
 @login_required
@@ -107,7 +118,10 @@ def add_sub_assign(request, pk):
             models.Schedule.objects.create(user_id=user.id, description=description, type="学习", is_repeated=False,
                                            is_done=False, start_time=start_time, weight=weight, deadline=deadline,
                                            expected_minutes_consumed=emc)
-        return HttpResponseRedirect(reverse('helper:group_home', args=(pk, )))
+            return HttpResponseRedirect(reverse('helper:group_home', args=(pk, )))
+        else:
+            message = "添加失败！"
+            return render(request, "../templates/group/add_sub_assign.html", {'form': form, 'message': message})
 
 
 @login_required
