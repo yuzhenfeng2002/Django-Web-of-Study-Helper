@@ -1,94 +1,175 @@
 <!DOCTYPE html>
-<html lang="zh">
-  <head>
+<html lang="en">
+
+<head>
+
     <meta charset="utf-8">
-    <title>个人主页</title>
-    {% load static %}
-    <link rel="stylesheet" href="{% static 'style.css' %}">
-  </head>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="description" content="">
+    <meta name="author" content="">
 
-  <body>
-    <header>
-      <h1>我的学习助手</h1>
-      <ul>
-        <li>{{ user.username }}</li>
-        <li>{{ user.email }}</li>
-        <li>{{ user.profile.name }}</li>
-      </ul>
-      <p><a href="{% url 'helper:pwd_change' %}">修改密码</a> <a href="{% url 'helper:logout' %}">退出登录</a></p>
+    <title>Blog</title>
 
-      <nav>
-        <ul>
-          <li><a href="{% url 'helper:home' %}">我的主页</a></li>
-          <li><a href="{% url 'helper:blog_homepage' %}">我的博客</a></li>
-          <li><a href="{% url 'helper:hot' 1 %}">热门博客</a></li>
-          <li><a href="{% url 'helper:friends_admin' %}">我的好友</a></li>
-          <li><a href="{% url 'helper:schedule_home' %}">我的日程</a></li>
-          <li><a href="{% url 'helper:group_admin' %}">小组任务</a></li>
-        </ul>
-      </nav>
-    </header>
+    <!-- Custom fonts for this template-->
+    <link
+        href="https://fonts.googleapis.com/css?family=Nunito:200,200i,300,300i,400,400i,600,600i,700,700i,800,800i,900,900i"
+        rel="stylesheet">
 
-    <main>
-      <article>
-        <h2>{{ blog.title }}</h2>
-        <p>
-            {{ blog.created_time.date }} {{ blog.pageview }}
-            {% if user.id == blog.user.id %}
-            <a href="{% url 'helper:blog_modify' blog.id %}">修改博客</a>
-            <a href="{% url 'helper:blog_delete' blog.id %}">删除博客</a>
-            {% endif %}
-        </p>
-        <p>{{ blog.content|linebreaksbr }}</p>
+    <!-- Custom styles for this template-->
+{% load static %}
+    <link rel="stylesheet" href="{% static 'css/Study_Helper.css' %}">
 
-        <form method="post">
-            {% csrf_token %}
-            <input type="hidden" name="collect_blog">
-            <button name="collect">
-                {% if is_collected == True %}
-                    取消收藏
-                {% else %}
-                    收藏博客
-                {% endif %}
-            </button>
-        </form>
-        
-        <form method="post">
-            {% csrf_token %}
-            <label>
-                <input type="text" name="create_comment">
-            </label>
-            <button name="create">发表评论</button>
-        </form>
-        
-        {% if comments %}
-            {% for c in comments %}
-            <p>{{ c.content|linebreaksbr }}</p>
-            {% if c.user.id == user.id %}
-                <form method="post">
-                    {% csrf_token %}
-                    <input type="hidden" name="delete_comment" value="{{ c.content }}">
-                    <button name="delete">删除评论</button>
-                </form>
-            {% endif %}
-            {% endfor %}
-        {% endif %}
-      </article>
+</head>
 
-      <aside>
-        <h2>评论列表</h2>
-        {% if comments %}
-            {% for c in comments %}
-            <p>{{ c.content|truncatewords:10 }}</p>
-            {% endfor %}
-        {% endif %}
-      </aside>
+<body class="bg-gradient-primary">
 
-    </main>
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-12 mb-4">
+                <!-- Topbar -->
+                <nav class="navbar navbar-expand navbar-light bg-white  mb-4 static-top shadow-lg">
+                    <a href="{% url 'helper:home' %}">济·忆·校·园</a>
 
-    <footer>
-      <p>本站点遵守 MIT 协议。原始版本由 Yuzhen FENG 于 2021 年编写。</p>
-    </footer>
+                <!-- Topbar Navbar -->
+                <ul class="navbar-nav ml-auto">
+
+                <!-- Nav Item - User Information -->
+                <li class="nav-item">
+                    <a class="nav-link" id="userName">
+                        <span class="mr-2 d-none d-lg-inline text-gray-600 small">{{ user.profile.name }}</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" id="userId">
+                        <span class="mr-2 d-none d-lg-inline text-gray-600 small">{{ user.username }}</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" id="userEmail">
+                        <span class="mr-2 d-none d-lg-inline text-gray-600 small">{{ user.email }}</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" id="pwdChange" role="button" href="{% url 'helper:home' %}">
+                        <span class="mr-2 d-none d-lg-inline text-primary small">返回主页</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" id="loginOut" role="button"  href="" onclick="window.close();">
+                        <span class="mr-2 d-none d-lg-inline text-danger small">关闭页面</span>
+                    </a>
+                </li>
+            </ul>
+        </nav></div>
+
+            <!-- Content Column -->
+            <div class="col-lg-9 mb-5">
+
+                <!-- Blog -->
+                <div class="card shadow mb-4">
+                    <div class="card-header py-3 ">
+                        <h6 class="m-0 font-weight-bold text-primary text-center">博文</h6>
+                    </div>
+                    <div class="card-body">
+                        <article>
+                            <h2>{{ blog.title }}</h2>
+                            <p>
+                                {{ blog.created_time.date }} {{ blog.pageview }}
+                                {% if user.id == blog.user.id %}
+                                    <a href="{% url 'helper:blog_modify' blog.id %}">修改博客</a>
+                                    <a href="{% url 'helper:blog_delete' blog.id %}">删除博客</a>
+                                {% endif %}
+                            </p>
+
+                            <!-- Divider -->
+                            <hr class="divider">
+
+                            <p>{{ blog.content|linebreaksbr }}</p>
+
+                            <!-- Divider -->
+                            <hr class="divider">
+
+                            <form method="post">
+                                {% csrf_token %}
+                                <input type="hidden" name="collect_blog">
+                                <button class="btn btn-primary" name="collect">
+                                    {% if is_collected == True %}
+                                        取消收藏
+                                    {% else %}
+                                        收藏博客
+                                    {% endif %}
+                                </button>
+                            </form>
+                        </article>
+                    </div>
+                </div>
+
+                <!-- Add Comment -->
+                <div class="card shadow mb-4">
+                    <div class="card-header py-3 ">
+                        <h6 class="m-0 font-weight-bold text-primary text-center">添加评论</h6>
+                    </div>
+                    <div class="card-body">
+                        <article>
+                            <form method="post">
+                                {% csrf_token %}
+                                <label>
+                                    <input type="text" name="create_comment">
+                                </label>
+                                <button class="btn btn-primary" name="create">发表评论</button>
+                            </form>
+
+                            {% if comments %}
+                                {% for c in comments %}
+                                    <p>{{ c.content|linebreaksbr }}</p>
+                                    {% if c.user.id == user.id %}
+                                        <form method="post">
+                                            {% csrf_token %}
+                                            <input type="hidden" name="delete_comment" value="{{ c.content }}">
+                                            <button class="btn btn-primary" name="delete">删除评论</button>
+                                        </form>
+                                        <hr class="divider">
+                                    {% endif %}
+                                {% endfor %}
+                            {% endif %}
+                        </article>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-lg-3 mb-4">
+
+                <!-- Friends List -->
+                <div class="card shadow mb-4">
+                    <div class="card-header py-3">
+                        <h6 class="m-0 font-weight-bold text-primary">评论</h6>
+                    </div>
+                    <div class="card-body">
+                        {% if comments %}
+                            {% for c in comments %}
+                                <p>{{ c.content|truncatewords:10 }}</p>
+                                <hr class="divider">
+                            {% endfor %}
+                        {% endif %}
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+    </div>
+
+    <!-- Bootstrap core JavaScript-->
+    <script src="{% static 'jquery/jquery.min.js' %}"></script>
+    <script src="{% static 'js/bootstrap.bundle.min.js' %}"></script>
+
+    <!-- Core plugin JavaScript-->
+    <script src="{% static 'jquery-easing/jquery.easing.min.js' %}"></script>
+
+    <!-- Custom scripts for all pages-->
+    <script src="{% static 'js/Study_Helper.js' %}"></script>
 
 </body>
+
 </html>

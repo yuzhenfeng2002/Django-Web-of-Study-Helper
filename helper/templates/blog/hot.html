@@ -1,63 +1,281 @@
 <!DOCTYPE html>
-<html lang="zh">
-  <head>
+<html lang="en">
+
+<head>
+
     <meta charset="utf-8">
-    <title>个人主页</title>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="description" content="">
+    <meta name="author" content="">
+
+    <title>Hot Blog</title>
+
+    <!-- Custom fonts for this template-->
     {% load static %}
-    <link rel="stylesheet" href="{% static 'style.css' %}">
-  </head>
+    <link href="{% static 'fontawesome-free/css/all.min.css' %}" rel="stylesheet" type="text/css">
+    <link
+        href="https://fonts.googleapis.com/css?family=Nunito:200,200i,300,300i,400,400i,600,600i,700,700i,800,800i,900,900i"
+        rel="stylesheet">
 
-  <body>
-    <header>
-      <h1>我的学习助手</h1>
-      <ul>
-        <li>{{ user.username }}</li>
-        <li>{{ user.email }}</li>
-        <li>{{ user.profile.name }}</li>
-      </ul>
-      <p><a href="{% url 'helper:pwd_change' %}">修改密码</a> <a href="{% url 'helper:logout' %}">退出登录</a></p>
+    <!-- Custom styles for this template-->
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'css/Study_Helper.css' %}">
 
-      <nav>
-        <ul>
-          <li><a href="{% url 'helper:home' %}">我的主页</a></li>
-          <li><a href="{% url 'helper:blog_homepage' %}">我的博客</a></li>
-          <li><a href="{% url 'helper:hot' 1 %}">热门博客</a></li>
-          <li><a href="{% url 'helper:friends_admin' %}">我的好友</a></li>
-          <li><a href="{% url 'helper:schedule_home' %}">我的日程</a></li>
-          <li><a href="{% url 'helper:group_admin' %}">小组任务</a></li>
+</head>
+
+<body id="page-top">
+
+    <!-- Page Wrapper -->
+    <div id="wrapper">
+
+        <!-- Sidebar -->
+        <ul class="navbar-nav bg-gradient-primary sidebar sidebar-dark accordion" id="accordionSidebar">
+
+            <!-- Sidebar - Brand -->
+            <a class="sidebar-brand d-flex align-items-center justify-content-center " href="{% url 'helper:home' %}">
+                <div class="sidebar-brand-icon">
+                    <img src="../../static/img/logo.png" class="fas fa-laugh-wink" width="50" height="50"></img>
+                </div>
+                <div class="sidebar-brand-text mx-3">济·忆·校·园</div>
+            </a>
+
+            <!-- Divider -->
+            <hr class="sidebar-divider my-0">
+
+            <!-- Nav Item - Dashboard -->
+            <li class="nav-item active">
+                <a class="nav-link" href="{% url 'helper:home' %}">
+                    <i class="fas fa-fw fa-sun"></i>
+                    <span>我的主页</span></a>
+            </li>
+
+            <!-- Divider -->
+            <hr class="sidebar-divider">
+
+            <!-- Heading -->
+            <div class="sidebar-heading">
+                博客
+            </div>
+
+            <!-- Nav Item - My Blog Menu -->
+            <li class="nav-item">
+                 <a class="nav-link" href="{% url 'helper:hot' 1 %}">
+                    <i class="fas fa-fw fa-chart-area"></i>
+                    <span>热门博客</span>
+                </a>
+            </li>
+
+            <!-- Nav Item -  Hot Blog Menu -->
+            <li class="nav-item">
+                 <a class="nav-link" href="{% url 'helper:blog_homepage' %}">
+                    <i class="fas fa-fw fa-newspaper"></i>
+                    <span>我的博客</span>
+                </a>
+            </li>
+
+            <!-- Divider -->
+            <hr class="sidebar-divider">
+
+            <!-- Heading -->
+            <div class="sidebar-heading">
+                好友
+            </div>
+
+            <!-- Nav Item - Friends Menu -->
+            <li class="nav-item">
+                 <a class="nav-link" href="{% url 'helper:friends_admin' %}">
+                    <i class="fas fa-fw fa-user-friends"></i>
+                    <span>我的好友</span>
+                </a>
+            </li>
+
+            <!-- Divider -->
+            <hr class="sidebar-divider">
+
+            <!-- Heading -->
+            <div class="sidebar-heading">
+                日程
+            </div>
+            <!-- Nav Item - Schedule Menu -->
+            <li class="nav-item">
+                 <a class="nav-link" href="{% url 'helper:schedule_home' %}">
+                    <i class="fas fa-fw fa-calculator"></i>
+                    <span>我的日程</span>
+                </a>
+            </li>
+
+            <!-- Divider -->
+            <hr class="sidebar-divider">
+
+            <!-- Heading -->
+            <div class="sidebar-heading">
+                小组
+            </div>
+            <!-- Nav Item - Group Task Menu -->
+            <li class="nav-item">
+                 <a class="nav-link" href="{% url 'helper:group_admin' %}">
+                    <i class="fas fa-fw fa-tasks"></i>
+                    <span>小组任务</span>
+                </a>
+            </li>
+
+            <!-- Divider -->
+            <hr class="sidebar-divider d-none d-md-block">
+
+            <!-- Sidebar Toggler (Sidebar) -->
+            <div class="text-center d-none d-md-inline">
+                <button class="rounded-circle border-0" id="sidebarToggle"></button>
+            </div>
+
+            <!-- Sidebar Message -->
+            <div class="sidebar-card d-none d-lg-flex">
+                <p class="text-center mb-2"><strong>济忆校园</strong> 是一个为大学生提供学习规划与社交的平台</p>
+            </div>
+
         </ul>
-      </nav>
-    </header>
+        <!-- End of Sidebar -->
 
-    <main>
-      <article>
-        <h2>热门博客</h2>
-        {% if blogs %}
-          {% for b in blogs %}
-            <h3><a href="{% url 'helper:blog_page' b.id %}">{{ b.title }}</a></h3>
-            <p>{{ b.created_time }} {{ b.pageview }}</p>
-            <p>{{ b.content|truncatewords:50 }}</p>
-          {% endfor %}
-        {% endif %}
-      </article>
+        <!-- Content Wrapper -->
+        <div id="content-wrapper" class="d-flex flex-column">
 
-      <aside>
-          <h2>博客列表</h2>
-          {% if blogs %}
-          {% for b in blogs %}
-            <p><a href="{% url 'helper:blog_page' b.id %}">{{ b.title }}</a></p>
-          {% endfor %}
-        {% endif %}
-      </aside>
+            <!-- Main Content -->
+            <div id="content">
 
-    </main>
+                <!-- Topbar -->
+                <nav class="navbar navbar-expand navbar-light bg-white mb-4 static-top shadow">
 
-    <footer>
-        <a href="{% url 'helper:hot' current_page|add:'-1' %}">上一页</a>
-        <a href="{% url 'helper:hot' current_page|add:'1' %}">下一页</a>
-        <p>第{{ current_page }}页，共{{ page_num }}页</p>
-        <p>本站点遵守 MIT 协议。原始版本由 Yuzhen FENG 于 2021 年编写。</p>
-    </footer>
+                    <!-- Topbar Navbar -->
+                    <ul class="navbar-nav ml-auto">
+
+                        <!-- Nav Item - User Information -->
+                    <li class="nav-item">
+                        <a class="nav-link" id="userName">
+                            <span class="mr-2 d-none d-lg-inline text-gray-600 small">{{ user.profile.name }}</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                     <a class="nav-link" id="userId">
+                            <span class="mr-2 d-none d-lg-inline text-gray-600 small">{{ user.username }}</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" id="userEmail">
+                            <span class="mr-2 d-none d-lg-inline text-gray-600 small">{{ user.email }}</span>
+                        </a>
+                    </li>
+                        <li class="nav-item">
+                            <a class="nav-link" id="pwdChange" role="button" href="{% url 'helper:pwd_change' %}">
+                                <span class="mr-2 d-none d-lg-inline text-primary small">更改密码</span>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" id="loginOut" role="button" href="{% url 'helper:login' %}">
+                                <span class="mr-2 d-none d-lg-inline text-danger small">退出登录</span>
+                            </a>
+                        </li>
+                    </ul>
+
+                </nav>
+                <!-- End of Topbar -->
+
+                <!-- Begin Page Content -->
+                <div class="container-fluid">
+
+                    <!-- Page Heading -->
+                    <div class="d-sm-flex align-items-center justify-content-between mb-4">
+                        <h1 class="h3 mb-0 text-gray-800">热门博客</h1>
+                    </div>
+
+                    <div class="row">
+
+                        <!-- Content Column -->
+                        <div class="col-lg-9 mb-4">
+
+                            <!-- Friend's Recent Blogs -->
+                            <div class="card shadow mb-4">
+                                <div class="card-header py-3">
+                                    <h6 class="m-0 font-weight-bold text-primary">近期最热</h6>
+                                </div>
+                                <div class="card-body">
+                                    {% if blogs %}
+                                        {% for b in blogs %}
+                                            <h4><a target="_blank" href="{% url 'helper:blog_page' b.id %}">{{ b.title }}</a></h4>
+                                            <p>{{ b.created_time }} {{ b.pageview }}</p>
+                                            <p>{{ b.content|truncatewords:50 }}</p>
+                                        {% endfor %}
+                                    {% endif %}
+                                    <a href="{% url 'helper:hot' current_page|add:'-1' %}">上一页</a>
+                                    <a href="{% url 'helper:hot' current_page|add:'1' %}">下一页</a>
+                                    <p>第{{ current_page }}页，共{{ page_num }}页</p>
+                                </div>
+                            </div>
+
+                        </div>
+
+                        <div class="col-lg-3 mb-4">
+
+                            <!-- Friend Info -->
+                            <div class="card shadow mb-4">
+                                <div class="card-header py-3">
+                                    <h6 class="m-0 font-weight-bold text-primary">博客列表</h6>
+                                </div>
+                                <div class="card-body">
+                                    {% if blogs %}
+                                        {% for b in blogs %}
+                                            <p><a target="_blank" href="{% url 'helper:blog_page' b.id %}">{{ b.title }}</a></p>
+                                        {% endfor %}
+                                    {% endif %}
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+
+                </div>
+                <!-- /.container-fluid -->
+
+            </div>
+            <!-- End of Main Content -->
+
+            <!-- Footer -->
+            <footer class="sticky-footer bg-white">
+                <div class="container my-auto">
+                    <div class="copyright text-center my-auto">
+                        <span>Licensed Under MIT, Copyright &copy; Weibo LI 2021</span>
+                    </div>
+                </div>
+            </footer>
+            <!-- End of Footer -->
+
+        </div>
+        <!-- End of Content Wrapper -->
+
+    </div>
+    <!-- End of Page Wrapper -->
+
+    <!-- Scroll to Top Button-->
+    <a class="scroll-to-top rounded" href="#page-top">
+        <i class="fas fa-angle-up"></i>
+    </a>
+
+    <!-- Bootstrap core JavaScript-->
+    <script src="{% static 'jquery/jquery.min.js' %}"></script>
+    <script src="{% static 'js/bootstrap.bundle.min.js' %}"></script>
+
+    <!-- Core plugin JavaScript-->
+    <script src="{% static 'jquery-easing/jquery.easing.min.js' %}"></script>
+
+    <!-- Custom scripts for all pages-->
+    <script src="{% static 'js/Study_Helper.js' %}"></script>
+
+    <!-- Page level plugins -->
+    <script src="{% static 'chart.js/Chart.min.js' %}"></script>
+
+    <!-- Page level custom scripts -->
+    <script src="{% static 'js/demo/chart-area-demo.js' %}"></script>
+    <script src="{% static 'js/demo/chart-pie-demo.js' %}"></script>
 
 </body>
+
 </html>

@@ -32,6 +32,7 @@ class AssignmentForm(forms.Form):
 def group_admin(request):
     user = request.user
     leader_groups = None
+    message = None
     if request.method == 'POST':
         add_group = request.POST.get('group_name')
         leader_id = request.POST.get('leader_id')
@@ -44,14 +45,19 @@ def group_admin(request):
             models.UserGroup.objects.create(is_leader=True, group=group, user=user)
 
         if not(leader_id is None):
-            leader = models.User.objects.filter(username=leader_id)[0]
-            leader_groups = models.Group.objects.filter(leader_id__exact=leader.id)
+            try:
+                leader = models.User.objects.filter(username=leader_id)[0]
+                leader_groups = models.Group.objects.filter(leader_id__exact=leader.id)
+            except IndexError:
+                leader_groups = None
+                message = "组长的学号不存在！"
 
         if not(group_id is None):
             if models.UserGroup.objects.filter(pk=group_id, user_id=user.id).count() == 0:
                 user_group = models.UserGroup(is_leader=False, group_id=group_id, user=user)
-                print(user_group)
                 user_group.save()
+            else:
+                message = "请输入正确的组号！"
 
     add_form = GroupForm()
     user_groups = models.UserGroup.objects.filter(user_id=user.id)
@@ -61,7 +67,8 @@ def group_admin(request):
                   {
                       'add_form': add_form,
                       'groups': groups,
-                      'leader_groups': leader_groups
+                      'leader_groups': leader_groups,
+                      'message': message
                   })
 
 

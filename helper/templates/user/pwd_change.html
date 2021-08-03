@@ -1,31 +1,82 @@
 <!DOCTYPE html>
-<html lang="zh">
-  <head>
+<html lang="en">
+
+<head>
+
     <meta charset="utf-8">
-    <title>修改密码</title>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="description" content="">
+    <meta name="author" content="">
+
+    <title>Password Changing</title>
+
+    <!-- Custom fonts for this template-->
+    <link
+        href="https://fonts.googleapis.com/css?family=Nunito:200,200i,300,300i,400,400i,600,600i,700,700i,800,800i,900,900i"
+        rel="stylesheet">
+
+    <!-- Custom styles for this template-->
     {% load static %}
-    <link rel="stylesheet" href="{% static 'style.css' %}">
-  </head>
+    <link rel="stylesheet" href="{% static 'css/Study_Helper.css' %}">
 
-  <body>
-    <header>
-      <h1>我的学习助手</h1>
-    </header>
+</head>
 
-    <main>
-        <form method="post">
-            {% csrf_token %}
-            {{ form }}
-            <input type="submit" value="修改">
-            {% if message %}
-                <p>{{ message }}</p>
-            {% endif %}
-        </form>
-    </main>
+<body class="bg-gradient-primary">
 
-    <footer>
-      <p>本站点遵守 MIT 协议。原始版本由 Yuzhen FENG 于 2021 年编写。</p>
-    </footer>
+    <div class="container">
 
-    </body>
+        <!-- Outer Row -->
+        <div class="row justify-content-center">
+
+            <div class="col-xl-10 col-lg-12 col-md-9 m-5">
+
+                <div class="card o-hidden border-0 shadow-lg my-5">
+                    <div class="card-body p-0">
+                        <!-- Nested Row within Card Body -->
+                        <div class="row">
+                            <div class="col-lg-6 d-none d-lg-block ">
+                               <img src="../../static/img/class_room.png" class="img-rounded" width="464.99" height="460.2">
+                            </div>
+                            <div class="col-lg-6">
+                                <div class="p-5">
+                                    <div class="text-center">
+                                        <h1 class="h4 text-gray-900 mb-4">修改密码</h1>
+                                    </div>
+                                    <form method="post">
+                                        {% csrf_token %}
+                                        {{ form }}
+                                        <input type="submit" class="btn btn-primary btn-user btn-block" value="修改">
+                                        {% if message %}
+                                        <p>{{ message }}</p>
+                                        {% endif %}
+                                    </form>
+                                    <hr>
+                                    <div class="text-center">
+                                        <p class="small">MIS2019, SEM, Tongji University</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+    <!-- Bootstrap core JavaScript-->
+    <script src="{% static 'jquery/jquery.min.js' %}"></script>
+    <script src="{% static 'js/bootstrap.bundle.min.js' %}"></script>
+
+    <!-- Core plugin JavaScript-->
+    <script src="{% static 'jquery-easing/jquery.easing.min.js' %}"></script>
+
+    <!-- Custom scripts for all pages-->
+    <script src="{% static 'js/Study_Helper.js' %}"></script>
+
+</body>
+
 </html>
