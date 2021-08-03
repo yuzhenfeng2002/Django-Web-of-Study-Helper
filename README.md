@@ -4,6 +4,8 @@
 
 该项目的GitHub地址为：[https://github.com/Feng-Yz/Study-Helper](https://github.com/Feng-Yz/Study-Helper)
 
+或：[https://github.com/Weber-LiWb/AI-Study-Helper](https://github.com/Weber-LiWb/AI-Study-Helper)
+
 通过IP地址可以访问该项目网站：[http://47.103.73.100](http://47.103.73.100)
 
 ## 1 功能设计
@@ -171,6 +173,30 @@
 综上，建立的Django中的[models.py](helper/models.py)文件。
 
 ## 3 主要界面
+
+### 3.0 UX设计
+网站整体视觉体系选用同济大学特色的蓝白色，整体设计风格接近以Mac OS为代表的扁平拟物化风格。通过色块简明地划分功能区域，通过卡片式布局实现功能模块的实现。同时以适当的图片展示凸显同济特色。
+
+#### 3.0.1 UI体系
+为了更好地实现功能，我们在UI设计时遵循了以下规范。
+1. 主视觉系统
+
+2. 内容系
+   
+3. 表单系统
+
+
+#### 3.0.2 交互逻辑
+1. 侧导航栏
+   
+2. 顶栏导航
+   
+3. 按钮系统
+   
+4. 内链系统
+
+
+#### 3.0.3 用户友好
 
 ### 3.1 用户相关界面
 

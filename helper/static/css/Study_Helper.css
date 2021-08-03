@@ -186,6 +186,9 @@ button.close{padding:0;background-color:transparent;border:0}a.close.disabled{po
 .animated--fade-in{-webkit-animation-name:fadeIn;animation-name:fadeIn;-webkit-animation-duration:.2s;animation-duration:.2s;-webkit-animation-timing-function:opacity cubic-bezier(0,1,.4,1);animation-timing-function:opacity cubic-bezier(0,1,.4,1)}
 .bg-spe{background-image:url(../img/welcome.jpg);background-size:cover}
 .bg-nor{background-image:url(../img/bg.jpg);background-size:cover}
+.bg-sch{background-image: url(../img/rcbg.jpg);background-size: cover}
+.bg-tsk{background-image: url(../img/xzbg.jpg);background-size: cover}
+.bg-blg{background-image: url(../img/bdbg.jpg);background-size: cover}
 .bg-gradient-primary{background-color:#4e73df;background-image:linear-gradient(180deg,#4e73df 10%,#224abe 100%);background-size:cover}
 .bg-gradient-secondary{background-color:#858796;background-image:linear-gradient(180deg,#858796 10%,#60616f 100%);background-size:cover}
 .bg-gradient-success{background-color:#1cc88a;background-image:linear-gradient(180deg,#1cc88a 10%,#13855c 100%);background-size:cover}
