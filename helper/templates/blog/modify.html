@@ -1,30 +1,32 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
-    <title><!DOCTYPE html>
-<html lang="en">
+    <title>
+        <!DOCTYPE html>
+        <html lang="en">
 
-<head>
+        <head>
 
-    <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-    <meta name="description" content="">
-    <meta name="author" content="">
+            <meta charset="utf-8">
+            <meta http-equiv="X-UA-Compatible" content="IE=edge">
+            <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+            <meta name="description" content="">
+            <meta name="author" content="">
 
-    <title>Adding Blog</title>
+            <title>Adding Blog</title>
 
-    <!-- Custom fonts for this template-->
-    <link
-        href="https://fonts.googleapis.com/css?family=Nunito:200,200i,300,300i,400,400i,600,600i,700,700i,800,800i,900,900i"
-        rel="stylesheet">
+            <!-- Custom fonts for this template-->
+            <link
+                href="https://fonts.googleapis.com/css?family=Nunito:200,200i,300,300i,400,400i,600,600i,700,700i,800,800i,900,900i"
+                rel="stylesheet">
 
-    <!-- Custom styles for this template-->
-{% load static %}
-    <link rel="stylesheet" href="{% static 'css/Study_Helper.css' %}">
+            <!-- Custom styles for this template-->
+            {% load static %}
+            <link rel="stylesheet" href="{% static 'css/Study_Helper.css' %}">
 
-</head>
+        </head>
 
 <body class="bg-gradient-primary">
 
@@ -35,37 +37,38 @@
                 <nav class="navbar navbar-expand navbar-light bg-white  mb-4 static-top shadow-lg">
                     <a href="{% url 'helper:home' %}">济·忆·校·园</a>
 
-                <!-- Topbar Navbar -->
-                <ul class="navbar-nav ml-auto">
+                    <!-- Topbar Navbar -->
+                    <ul class="navbar-nav ml-auto">
 
-                <!-- Nav Item - User Information -->
-                <li class="nav-item">
-                    <a class="nav-link" id="userName">
-                        <span class="mr-2 d-none d-lg-inline text-gray-600 small">{{ user.profile.name }}</span>
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" id="userId">
-                        <span class="mr-2 d-none d-lg-inline text-gray-600 small">{{ user.username }}</span>
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" id="userEmail">
-                        <span class="mr-2 d-none d-lg-inline text-gray-600 small">{{ user.email }}</span>
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" id="pwdChange" role="button" href="{% url 'helper:home' %}">
-                        <span class="mr-2 d-none d-lg-inline text-primary small">返回主页</span>
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" id="loginOut" role="button" href="#" onclick="window.close();">
-                        <span class="mr-2 d-none d-lg-inline text-danger small">关闭页面</span>
-                    </a>
-                </li>
-            </ul>
-        </nav></div>
+                        <!-- Nav Item - User Information -->
+                        <li class="nav-item">
+                            <a class="nav-link" id="userName">
+                                <span class="mr-2 d-none d-lg-inline text-gray-600 small">{{ user.profile.name }}</span>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" id="userId">
+                                <span class="mr-2 d-none d-lg-inline text-gray-600 small">{{ user.username }}</span>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" id="userEmail">
+                                <span class="mr-2 d-none d-lg-inline text-gray-600 small">{{ user.email }}</span>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" id="pwdChange" role="button" href="{% url 'helper:home' %}">
+                                <span class="mr-2 d-none d-lg-inline text-primary small">返回主页</span>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" id="loginOut" role="button" href="#" onclick="window.close();">
+                                <span class="mr-2 d-none d-lg-inline text-danger small">关闭页面</span>
+                            </a>
+                        </li>
+                    </ul>
+                </nav>
+            </div>
 
             <!-- Content Column -->
             <div class="col-xl-12 col-lg-12 col-md-12 m-auto">
@@ -76,23 +79,27 @@
                         <h6 class="m-0 font-weight-bold text-primary text-center">博客内容</h6>
                     </div>
                     <div class="card-body">
-                      <form class="row" method="post">
-                        {% csrf_token %}
-                        {{ form }}
-                          <input type="submit" class="btn btn-primary btn-user btn-block" value="提交">
-                        {% if message %}
-                        <p>{{ message }}</p>
-                        {% endif %}
-                      </form>
+                        <form class="row" method="post">
+                            {% csrf_token %}
+                            {{ form }}
+                            <input type="submit" class="btn btn-primary btn-user btn-block" value="提交">
+                            {% if message %}
+                            <script>
+                                mes = "{{message}}";
+                                if (!mes.match("message"))
+                                    alert(mes);
+                            </script>
+                            {% endif %}
+                        </form>
                     </div>
                 </div>
             </div>
-            </div>
         </div>
+    </div>
 
     </div>
 
-     <!-- Bootstrap core JavaScript-->
+    <!-- Bootstrap core JavaScript-->
     <script src="{% static 'jquery/jquery.min.js' %}"></script>
     <script src="{% static 'js/bootstrap.bundle.min.js' %}"></script>
 

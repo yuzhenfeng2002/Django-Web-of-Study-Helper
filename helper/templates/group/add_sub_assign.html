@@ -81,7 +81,11 @@
                             {{ form }}
                             <input type="submit" class="btn btn-primary btn-user btn-block" value="提交">
                             {% if message %}
-                                <p>{{ message }}</p>
+                            <script>
+                                mes = "{{message}}";
+                                if (!mes.match("message"))
+                                    alert(mes);
+                            </script>
                             {% endif %}
                         </form>
                     </div>

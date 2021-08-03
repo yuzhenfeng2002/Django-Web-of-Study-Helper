@@ -35,7 +35,7 @@
             <!-- Sidebar - Brand -->
             <a class="sidebar-brand d-flex align-items-center justify-content-center " href="{% url 'helper:home' %}">
                 <div class="sidebar-brand-icon">
-                    <img src="../../static/img/logo.png" class="fas fa-laugh-wink" width="50" height="50"></img>
+                    <img src="{% static 'img/logo.png' %}" class="fas fa-laugh-wink" width="50" height="50"></img>
                 </div>
                 <div class="sidebar-brand-text mx-3">济·忆·校·园</div>
             </a>
@@ -116,21 +116,6 @@
             <li class="nav-item">
                  <a class="nav-link" href="{% url 'helper:group_admin' %}">
                     <i class="fas fa-fw fa-tasks"></i>
-                    <span>小组任务</span>
-                </a>
-            </li>
-
-            <!-- Divider -->
-            <hr class="sidebar-divider">
-
-            <!-- Heading -->
-            <div class="sidebar-heading">
-                小组
-            </div>
-            <!-- Nav Item - Group Task Menu -->
-            <li class="nav-item">
-                 <a class="nav-link" href="{% url 'helper:group_admin' %}">
-                    <i class="fas fa-fw fa-chart-area"></i>
                     <span>小组任务</span>
                 </a>
             </li>

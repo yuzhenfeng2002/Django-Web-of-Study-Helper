@@ -35,7 +35,7 @@
             <!-- Sidebar - Brand -->
             <a class="sidebar-brand d-flex align-items-center justify-content-center " href="{% url 'helper:home' %}">
                 <div class="sidebar-brand-icon">
-                    <img src="../../static/img/logo.png" class="fas fa-laugh-wink" width="50" height="50"></img>
+                    <img src="{% static 'img/logo.png' %}" class="fas fa-laugh-wink" width="50" height="50"></img>
                 </div>
                 <div class="sidebar-brand-text mx-3">济·忆·校·园</div>
             </a>
@@ -232,19 +232,11 @@
                                     <h6 class="m-0 font-weight-bold text-primary">博客列表</h6>
                                 </div>
                                 <div class="card-body">
-                                    <article>
-                                        {% if friends %}
-                                            <ul>
-                                                {% for f in friends %}
-                                                <li>
-                                                    <a target="_blank" href="{% url 'helper:public' f.friend.id %}">
-                                                        {{ f.friend.username }} {{ f.friend.profile.name }}
-                                                    </a>
-                                                </li>
-                                                {% endfor %}
-                                            </ul>
-                                        {% endif %}
-                                    </article>
+                                    {% if blogs %}
+                                    {% for b in blogs %}
+                                    <p><a target="_blank" href="{% url 'helper:blog_page' b.id %}">{{ b.title }}</a></p>
+                                    {% endfor %}
+                                    {% endif %}
                                 </div>
                             </div>
 

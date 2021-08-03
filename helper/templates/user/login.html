@@ -17,7 +17,7 @@
         rel="stylesheet">
 
     <!-- Custom styles for this template-->
-{% load static %}
+    {% load static %}
     <link rel="stylesheet" href="{% static 'css/Study_Helper.css' %}">
 
 </head>
@@ -35,22 +35,24 @@
                     <div class="card-body p-0">
                         <!-- Nested Row within Card Body -->
                         <div class="row">
-                            <div class="col-lg-6 d-none d-lg-block ">
-                               <img src="../../static/img/class_room.png" class="img-rounded" width="464.99" height="418.2">
-                            </div>
+                            <div class="col-lg-6 d-none d-lg-block bg-login-image"></div>
                             <div class="col-lg-6">
                                 <div class="p-5">
                                     <div class="text-center">
                                         <h1 class="h4 text-gray-900 mb-4">济·忆·校·园</h1>
                                     </div>
-                                          <form method="post">
-                                              {% csrf_token %}
-                                              {{ form }}
-                                              <input type="submit" class="btn btn-primary btn-user btn-block" value="登录">
-                                              {% if message %}
-                                              <p>{{ message }}</p>
-                                              {% endif %}
-                                          </form>
+                                    <form method="post">
+                                        {% csrf_token %}
+                                        {{ form }}
+                                        <input type="submit" class="btn btn-primary btn-user btn-block" value="登录">
+                                        {% if message %}
+                                        <script>
+                                            mes = "{{message}}";
+                                            if (!mes.match("message"))
+                                                alert(mes);
+                                        </script>
+                                        {% endif %}
+                                    </form>
                                     <hr>
                                     <div class="text-center">
                                         <a class="small" href="{% url 'helper:register' %}">还没账户？创建一个!</a>

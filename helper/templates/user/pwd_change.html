@@ -36,7 +36,8 @@
                         <!-- Nested Row within Card Body -->
                         <div class="row">
                             <div class="col-lg-6 d-none d-lg-block ">
-                               <img src="../../static/img/class_room.png" class="img-rounded" width="464.99" height="460.2">
+                                <img src="../../static/img/class_room.png" class="img-rounded" width="464.99"
+                                    height="460.2">
                             </div>
                             <div class="col-lg-6">
                                 <div class="p-5">
@@ -48,7 +49,11 @@
                                         {{ form }}
                                         <input type="submit" class="btn btn-primary btn-user btn-block" value="修改">
                                         {% if message %}
-                                        <p>{{ message }}</p>
+                                        <script>
+                                            mes = "{{message}}";
+                                            if (!mes.match("message"))
+                                                alert(mes);
+                                        </script>
                                         {% endif %}
                                     </form>
                                     <hr>
