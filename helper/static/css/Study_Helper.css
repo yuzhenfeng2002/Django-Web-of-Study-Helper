@@ -186,9 +186,9 @@ button.close{padding:0;background-color:transparent;border:0}a.close.disabled{po
 .animated--fade-in{-webkit-animation-name:fadeIn;animation-name:fadeIn;-webkit-animation-duration:.2s;animation-duration:.2s;-webkit-animation-timing-function:opacity cubic-bezier(0,1,.4,1);animation-timing-function:opacity cubic-bezier(0,1,.4,1)}
 .bg-spe{background-image:url(../img/welcome.jpg);background-size:cover}
 .bg-nor{background-image:url(../img/bg.jpg);background-size:cover}
-.bg-sch{background-image: url(../img/rcbg.jpg);background-size: cover}
-.bg-tsk{background-image: url(../img/xzbg.jpg);background-size: cover}
-.bg-blg{background-image: url(../img/bdbg.jpg);background-size: cover}
+.bg-sch{background-image:url(../img/rcbg.jpg);background-size:cover}
+.bg-tsk{background-image:url(../img/xzbg.jpg);background-size:cover}
+.bg-blg{background-image:url(../img/bdbg.jpg);background-size:cover}
 .bg-gradient-primary{background-color:#4e73df;background-image:linear-gradient(180deg,#4e73df 10%,#224abe 100%);background-size:cover}
 .bg-gradient-secondary{background-color:#858796;background-image:linear-gradient(180deg,#858796 10%,#60616f 100%);background-size:cover}
 .bg-gradient-success{background-color:#1cc88a;background-image:linear-gradient(180deg,#1cc88a 10%,#13855c 100%);background-size:cover}
@@ -199,6 +199,7 @@ button.close{padding:0;background-color:transparent;border:0}a.close.disabled{po
 .bg-gradient-dark{background-color:#5a5c69;background-image:linear-gradient(180deg,#5a5c69 10%,#373840 100%);background-size:cover}
 .bg-gray-100{background-color:#f8f9fc!important}.bg-gray-200{background-color:#eaecf4!important}
 .bg-gray-300{background-color:#dddfeb!important}
+.bg-t{background-color:#0b2d64!important}
 .bg-gray-400{background-color:#d1d3e2!important}
 .bg-gray-500{background-color:#b7b9cc!important}.bg-gray-600{background-color:#858796!important}
 .bg-gray-700{background-color:#6e707e!important}.bg-gray-800{background-color:#5a5c69!important}.bg-gray-900{background-color:#3a3b45!important}
