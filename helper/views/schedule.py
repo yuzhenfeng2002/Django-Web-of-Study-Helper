@@ -135,7 +135,8 @@ def home(request):
     schedules = get_schedules(user, search_day_num)
     daily_schedules = get_schedules(user, 1)
     for ds in daily_schedules:
-        ds.deadline = ds.start_time + datetime.timedelta(minutes=ds.expected_minutes_consumed)
+        if ds.is_repeated == True:
+            ds.deadline = ds.start_time + datetime.timedelta(minutes=ds.expected_minutes_consumed)
     return render(request, "../templates/schedule/home.html",
                   {
                       'schedules': schedules,

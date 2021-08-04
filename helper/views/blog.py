@@ -152,14 +152,16 @@ def public(request, friend_id):
     user: User = request.user
     friend = Friend.objects.filter(user_id__exact=user.id, friend_id__exact=friend_id)
     if len(friend) == 0 and friend_id != user.id:
-        return HttpResponseForbidden
-
+        return HttpResponseForbidden()
     blogs = Blog.objects.filter(user_id__exact=friend_id)
-    friend_user = friend[0].friend
-    message = ""
-    if friend[0].authority == 0:
-        blogs = None
-        message = "没有权限访问！"
+    message = None
+    if friend_id == user.id:
+        friend_user = user
+    else:
+        friend_user = friend[0].friend
+        if friend[0].authority == 0:
+            blogs = None
+            message = "没有权限访问！"
 
     return render(request, '../templates/blog/friend.html',
                   {

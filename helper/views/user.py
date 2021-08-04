@@ -106,11 +106,8 @@ def login(request):
     return render(request, '../templates/user/login.html', {'form': form})
 
 
-@login_required
 def index(request):
-    user = request.user
-    if user.is_authenticated:
-        return HttpResponseRedirect(reverse('helper:home'))
+    return render(request, "../templates/welcome.html")
 
 
 @login_required
