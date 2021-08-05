@@ -84,9 +84,6 @@ def login(request):
         if form.is_valid():
             email = form.cleaned_data['email']
             password = form.cleaned_data['password']
-            user = User.objects.filter(email__exact=email)
-            user_id = user.get().username
-            user = auth.authenticate(username=user_id, password=password)
 
             filter_result = User.objects.filter(email__exact=email)
             if len(filter_result) == 0:
@@ -94,6 +91,9 @@ def login(request):
                 return render(request, '../templates/user/login.html',
                               {'form': form, 'message': message})
 
+            user = User.objects.filter(email__exact=email)
+            user_id = user.get().username
+            user = auth.authenticate(username=user_id, password=password)
             if user is not None and user.is_active:
                 auth.login(request, user)
                 return HttpResponseRedirect(reverse('helper:home'))
