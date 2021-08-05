@@ -201,8 +201,9 @@
                                             {% if blogs %}
                                                 {% for b in blogs %}
                                                 <h4><a target="_blank" href="{% url 'helper:blog_page' b.id %}">{{ b.title }}</a></h4>
-                                                <p>{{ b.created_time }} {{ b.pageview }}</p>
-                                                <p>{{ b.content|truncatewords:50 }}</p>
+                                                <p>{{ b.created_time }} 热度:{{ b.pageview }}</p>
+                                                <p>{{ b.content|truncatechars:200 }}</p>
+                                                    <hr class="divider">
                                                 {% endfor %}
                                                 {% endif %}
                                     </article>

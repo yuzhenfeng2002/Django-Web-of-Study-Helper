@@ -246,6 +246,13 @@
                                             <li><a target="_blank" href="{% url 'helper:public' p.user.id %}">
                                                 {{ p.user.username }} {{ p.user.profile.name }}
                                             </a></li>
+                                            {% if message %}
+                                                <script>
+                                                    mes="{{message}}";
+                                                    if(!mes.match("message"))
+                                                        alert(mes);
+                                                </script>
+                                            {% endif %}
                                         {% endfor %}
                                         </ul>
                                     {% endif %}

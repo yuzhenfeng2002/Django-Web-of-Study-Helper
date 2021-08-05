@@ -43,6 +43,13 @@
                                 {% csrf_token %}
                                 {{ form }}
                                 <input type="submit" class="btn btn-primary btn-block" value="注册">
+                                {% if message %}
+                                    <script>
+                                        mes="{{message}}";
+                                        if(!mes.match("message"))
+                                            alert(mes);
+                                    </script>
+                                {% endif %}
                             </form>
                             <hr>
                             <div class="text-center">
