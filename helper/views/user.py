@@ -8,6 +8,7 @@ from django.contrib import auth
 from django.db.models import Q
 from ..models import *
 from .settings import *
+from .schedule import get_schedules
 import datetime
 import copy
 
@@ -19,8 +20,8 @@ class RegistrationForm(forms.Form):
     user_id = forms.CharField(label='学/工号', max_length=7, widget=forms.TextInput(attrs={'class': 'form-control form-control-user mb-5'}))
     email = forms.EmailField(label='邮箱', widget=forms.EmailInput(attrs={'class': 'form-control form-control-user mb-5'}))
     user_name = forms.CharField(label='昵称', max_length=10, widget=forms.TextInput(attrs={'class': 'form-control form-control-user mb-5'}))
-    gender = forms.ChoiceField(label='性别', widget=forms.Select(attrs={'class': 'form-control form-control-user mb-5'}), choices=GENDER_CHOICES)
-    user_type = forms.ChoiceField(label='用户类型', widget=forms.Select(attrs={'class': 'form-control form-control-user mb-5'}), choices=TYPE_CHOICES)
+    gender = forms.ChoiceField(label='性别', widget=forms.RadioSelect, choices=GENDER_CHOICES)
+    user_type = forms.ChoiceField(label='用户类型', widget=forms.RadioSelect, choices=TYPE_CHOICES)
     class_name = forms.CharField(label='班级', max_length=20, required=False, widget=forms.TextInput(attrs={'class': 'form-control form-control-user mb-5'}))
     password1 = forms.CharField(label='密码', widget=forms.PasswordInput(attrs={'class': 'form-control form-control-user mb-5'}))
     password2 = forms.CharField(label='再次输入密码', widget=forms.PasswordInput(attrs={'class': 'form-control form-control-user mb-5'}))
@@ -190,6 +191,7 @@ def home(request):
     user = request.user
 
     schedules, group_sub_assignments, friends = get_aside(user)
+    schedules = get_schedules(user, HOMEPAGE_SCHEDULE_DAY)
 
     blogs = Blog.objects.filter(Q(user__blog__pageview__gte=HOT_BLOG_PAGEVIEW,
                                   modified_time__gte

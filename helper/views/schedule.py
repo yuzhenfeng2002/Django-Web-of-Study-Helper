@@ -91,7 +91,8 @@ def get_schedules(user, search_day_num):
 
         interval = time.date() - s.start_time.date()
         s.start_time += datetime.timedelta(days=interval.days)
-        schedules.append(s)
+        if s.start_time <= s.deadline:
+            schedules.append(s)
 
     schedules = list(schedule_not_repeated)
     for i in range(search_day_num):
@@ -128,7 +129,10 @@ def home(request):
                 schedule.is_done = True
                 schedule.save()
             elif not (time_consumed is None):
-                models.FinishedSchedule.objects.create(schedule_id=finish_id, minutes_consumed=time_consumed)
+                if time_consumed != "":
+                    models.FinishedSchedule.objects.create(schedule_id=finish_id, minutes_consumed=time_consumed)
+                else:
+                    models.FinishedSchedule.objects.create(schedule_id=finish_id)
             else:
                 models.FinishedSchedule.objects.create(schedule_id=finish_id)
 
