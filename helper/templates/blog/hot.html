@@ -202,7 +202,8 @@
                                         {% for b in blogs %}
                                             <h4><a target="_blank" href="{% url 'helper:blog_page' b.id %}">{{ b.title }}</a></h4>
                                             <p>{{ b.created_time }} {{ b.pageview }}</p>
-                                            <p>{{ b.content|truncatewords:50 }}</p>
+                                            <p>{{ b.content|truncatechars:200 }}</p>
+                                            <hr class="divider">
                                         {% endfor %}
                                     {% endif %}
                                     <a href="{% url 'helper:hot' current_page|add:'-1' %}">上一页</a>

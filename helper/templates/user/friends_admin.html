@@ -246,6 +246,13 @@
                                             <div class="input-group-append">
                                                 {% csrf_token %}
                                                 <button class="btn btn-primary" name="apply">发起申请</button>
+                                                {% if message %}
+                                                    <script>
+                                                        mes="{{message}}";
+                                                        if(!mes.match("message"))
+                                                            alert(mes);
+                                                    </script>
+                                                {% endif %}
                                             </div>
                                         </div>
                                     </form>

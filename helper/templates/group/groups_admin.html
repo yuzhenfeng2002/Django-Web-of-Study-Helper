@@ -236,6 +236,13 @@
                                             <input type="text" name="leader_id">
                                         </label>
                                         <button class="btn btn-primary" name="search_for_leader">发起查询</button>
+                                        {% if message %}
+                                            <script>
+                                                mes="{{message}}";
+                                                if(!mes.match("message"))
+                                                    alert(mes);
+                                            </script>
+                                        {% endif %}
                                     </form>
                                     {% if leader_groups %}
                                         {% for g in leader_groups %}
@@ -249,6 +256,13 @@
                                             <input type="text" name="group_id">
                                         </label>
                                         <button class="btn btn-primary" name="search_for_group">添加小组</button>
+                                        {% if message %}
+                                            <script>
+                                                mes="{{message}}";
+                                                if(!mes.match("message"))
+                                                    alert(mes);
+                                            </script>
+                                        {% endif %}
                                     </form>
                                 </div>
                             </div>
