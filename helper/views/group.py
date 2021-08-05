@@ -64,7 +64,7 @@ def group_admin(request):
                 message = "组长的学号不存在！"
 
         if not(group_id is None):
-            if models.UserGroup.objects.filter(pk=group_id, user_id=user.id).count() == 0:
+            if len(models.UserGroup.objects.filter(group_id=group_id, user_id=user.id)) == 0:
                 user_group = models.UserGroup(is_leader=False, group_id=group_id, user=user)
                 user_group.save()
             else:
