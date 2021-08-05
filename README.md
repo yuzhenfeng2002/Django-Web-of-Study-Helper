@@ -2,7 +2,9 @@
 
 [TOC]
 
-该项目的GitHub地址为：[https://github.com/Feng-Yz/Study-Helper](https://github.com/Feng-Yz/Study-Helper)或：[https://github.com/Weber-LiWb/AI-Study-Helper](https://github.com/Weber-LiWb/AI-Study-Helper)
+该项目的GitHub地址为：[https://github.com/Feng-Yz/Study-Helper](https://github.com/Feng-Yz/Study-Helper)
+
+或：[https://github.com/Weber-LiWb/AI-Study-Helper](https://github.com/Weber-LiWb/AI-Study-Helper)
 
 通过IP地址可以访问该项目网站：[http://47.103.73.100](http://47.103.73.100)
 
@@ -198,7 +200,7 @@
 
 ### 3.1 用户相关界面
 
-在使用该网站时，用户首先访问URL`/`。点击进入后，如果用户已经登录，则进入用户的个人主页；否则进入登录界面。
+在使用该网站时，用户首先访问URL`/`。如果用户已经登录，则重定向至用户的个人主页；否则重定向至登录界面。
 
 #### 3.1.1 注册界面
 
@@ -465,7 +467,7 @@ Bootstrap的响应式格栅系统可以非常方便的让网页实现跨平台�
 
 一个典型的Bootstrap目录结构如下：
 
-![Bootstrap结构](\images\Bootstrap结构.png)
+![Bootstrap结构](images/Bootstrap结构.png)
 
 - CSS提供了样式，包含min字样的文件是压缩版本；
 - JS提供了脚本。
